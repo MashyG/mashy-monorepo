@@ -1,0 +1,18 @@
+{
+  "name": "mashy-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:vue": "pnpm -F @mashy-monorepo/vue-project dev",
+    "dev:react": "pnpm -F @mashy-monorepo/react-project dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "typescript-node": "^0.1.3"
+  }
+}
