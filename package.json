@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "dev:vue": "pnpm -F @mashy-monorepo/vue-project dev",
     "dev:react": "pnpm -F @mashy-monorepo/react-project dev"
   },
@@ -13,6 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^5.2.2",
-    "typescript-node": "^0.1.3"
+    "typescript-node": "^0.1.3",
+    "vite": "^4.4.5",
+    "vitest": "^0.34.6"
   }
 }
