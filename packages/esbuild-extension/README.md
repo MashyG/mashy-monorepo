@@ -67,3 +67,19 @@ pnpm build
 ```shell
 node ./scripts/transform.js
 ```
+
+## esbuild 插件例子
+
+### CDN 依赖拉取插件
+
+> 现在我们需要通过 Esbuild 插件来识别这样的 url 路径，然后从网络获取模块内容并让 Esbuild 进行加载，甚至不再需要 npm install 安装依赖了
+
+- [代码](./scripts/build-by-plugin.js)
+
+### 实现 HTML 构建插件
+
+> Esbuild 作为一个前端打包工具，本身并不具备 HTML 的构建能力。也就是说，当它把 js/css 产物打包出来的时候，并不意味着前端的项目可以直接运行了，我们还需要一份对应的入口 HTML 文件。而这份 HTML 文件当然可以手写一个，但手写显得比较麻烦，尤其是产物名称带哈希值的时候，每次打包完都要替换路径。那么，我们能不能通过 Esbuild 插件的方式来自动化地生成 HTML 呢？
+
+- [代码](./scripts/build-html-plugin.js)
+
+此时，根目录下会多出一个 [index.html](./index.html) 文件，并且会自动把依赖到 js 和 css 文件导入到 html 中
