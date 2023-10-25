@@ -36,9 +36,9 @@ pnpm build
   > 1. 容易使 Esbuild 在当前线程阻塞，丧失并发任务处理的优势
   > 2. Esbuild 所有插件中都不能使用任何异步操作，这给插件开发增加了限制
 
-```shell
-node ./scripts/build.js
-```
+  ```shell
+  node ./scripts/build.js
+  ```
 
 - serve API
 
@@ -54,9 +54,9 @@ node ./scripts/build.js
   > 2. 类似 webpack-dev-server，所有的产物文件都默认不会写到磁盘，而是放在内存中，通过请求服务来访问。
   > 3. 每次请求到来时，都会进行重新构建(rebuild)，永远返回新的产物。
 
-```shell
-node ./scripts/build-serve.js
-```
+  ```shell
+  node ./scripts/build-serve.js
+  ```
 
 #### 单文件转译 - Transform API
 
