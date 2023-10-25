@@ -50,7 +50,7 @@ export const uploadFile2TencentCos = async (params: UploadFileConfigs) => {
   })
 }
 
-export const uploadFilesToCOS = async (needUploadFils: Array<string>) => {
+export const uploadFiles2TencentCos = async (needUploadFils: Array<string>) => {
   const cosConfig = {
     SecretId: 'xxx',
     SecretKey: 'xxx'
@@ -118,7 +118,7 @@ export const refreshCDNUrl = async (
 //   try {
 //     const spinner = ora().start('正在更新打包后的文件...')
 //     const needUploadFils = ['/main.js', '/index.html']
-//     await uploadFilesToCOS(needUploadFils)
+//     await uploadFiles2TencentCos(needUploadFils)
 //     const needRefreshUrls = needUploadFils.map((url) => `baseUrl${url}`)
 //     const clientConfig = {
 //       credential: {
