@@ -2,10 +2,21 @@
   "name": "@mashy-monorepo/shared",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "build-by-js": "node scripts/build.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.4",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "lodash": "^4.17.21",
+    "rollup": "^4.1.4",
+    "rollup-plugin-terser": "^7.0.2"
+  }
 }
