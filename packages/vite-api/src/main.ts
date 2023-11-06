@@ -1,6 +1,6 @@
 import "./style.css";
 import { render } from "./render";
-import { initState } from "./state";
+// import { initState } from "./state";
 
 render();
 
@@ -9,7 +9,7 @@ render();
 //   import.meta.hot.accept("./render.ts", (newMod: any) => newMod.render());
 // }
 
-initState();
+// initState();
 
 // 条件守卫（接受多个子模块的更新）
 if (import.meta.hot) {
