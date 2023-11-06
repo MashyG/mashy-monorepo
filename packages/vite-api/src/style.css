@@ -1,0 +1,11 @@
+html,
+body {
+  background-color: whitesmoke;
+}
+
+#app,
+p {
+  text-align: center;
+  color: blueviolet;
+  margin-top: 40px;
+}
