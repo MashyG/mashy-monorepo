@@ -5,14 +5,20 @@ import { sayHello } from "@mashy-monorepo/shared";
 
 import "@mashy-monorepo/web-component";
 
-import JSXComp from "./components/jsx";
+import HelloworldComp from "./components/Helloworld";
+import Communication from "./components/Communication";
+import CommunicateByRef from "./components/CommunicateByRef";
 
 function App() {
   return (
     <>
       <div>
         <h1>Study for React 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
-        <JSXComp />
+        <HelloworldComp />
+        <div>==========================</div>
+        <Communication />
+        <div>==========================</div>
+        <CommunicateByRef />
       </div>
       <div>
         <h1>下面是Vue项目 Web-Component 注入 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
