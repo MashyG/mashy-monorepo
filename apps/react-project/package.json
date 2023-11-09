@@ -13,7 +13,8 @@
     "@mashy-monorepo/shared": "workspace:^",
     "@mashy-monorepo/web-component": "workspace:^",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

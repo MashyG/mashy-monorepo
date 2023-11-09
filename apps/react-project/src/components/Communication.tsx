@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 /* 子组件 */
-export function Son(props: any) {
+function Son(props: any) {
   const { fatherSay, sayFather } = props;
   return (
     <div className="son">

@@ -8,6 +8,7 @@ import "@mashy-monorepo/web-component";
 import HelloworldComp from "./components/Helloworld";
 import Communication from "./components/Communication";
 import CommunicateByRef from "./components/CommunicateByRef";
+import CssModule from "./components/CssModule";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Communication />
         <div>==========================</div>
         <CommunicateByRef />
+        <div>==========================</div>
+        <CssModule />
       </div>
       <div>
         <h1>下面是Vue项目 Web-Component 注入 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>

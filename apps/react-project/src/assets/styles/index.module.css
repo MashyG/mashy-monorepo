@@ -1,0 +1,8 @@
+:global(.text-bg) {
+  background-color: sandybrown;
+}
+
+.baseText {
+  composes: base from './base.module.css';
+  background-color: aquamarine;
+}
