@@ -9,6 +9,7 @@ import HelloworldComp from "./components/Helloworld";
 import Communication from "./components/Communication";
 import CommunicateByRef from "./components/CommunicateByRef";
 import CssModule from "./components/CssModule";
+import ContextComp from "./components/Context";
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
         <CommunicateByRef />
         <div>==========================</div>
         <CssModule />
+        <div>==========================</div>
+        <ContextComp />
       </div>
       <div>
         <h1>下面是Vue项目 Web-Component 注入 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
