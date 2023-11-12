@@ -16,7 +16,7 @@
 function HOC(WrapComponent) {
   return class Advance extends React.Component {
     state = {
-      name: "alien",
+      name: "mashy",
     };
     render() {
       return <WrapComponent {...this.props} {...this.state} />;

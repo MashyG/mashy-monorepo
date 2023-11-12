@@ -10,21 +10,27 @@ import Communication from "./components/Communication";
 import CommunicateByRef from "./components/CommunicateByRef";
 import CssModule from "./components/CssModule";
 import ContextComp from "./components/Context";
+import RenderComp from "./components/Render";
+import RenderMoreData from "./components/RenderMoreData";
 
 function App() {
   return (
     <>
       <div>
         <h1>Study for React 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
-        <HelloworldComp />
+        <RenderMoreData />
         <div>==========================</div>
-        <Communication />
+        <RenderComp />
         <div>==========================</div>
-        <CommunicateByRef />
+        <ContextComp />
         <div>==========================</div>
         <CssModule />
         <div>==========================</div>
-        <ContextComp />
+        <CommunicateByRef />
+        <div>==========================</div>
+        <Communication />
+        <div>==========================</div>
+        <HelloworldComp />
       </div>
       <div>
         <h1>下面是Vue项目 Web-Component 注入 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>

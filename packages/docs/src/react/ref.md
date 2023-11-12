@@ -28,7 +28,7 @@ function Son(props) {
   const { grandRef } = props;
   return (
     <div>
-      <div> i am alien </div>
+      <div> i am mashy </div>
       <span ref={grandRef}>这个是想要获取元素</span>
     </div>
   );

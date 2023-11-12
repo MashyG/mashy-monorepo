@@ -6,3 +6,12 @@
   composes: base from './base.module.css';
   background-color: aquamarine;
 }
+
+.bigData {
+  width: 100%;
+  height: 100%;
+}
+.circle {
+  width: 20px;
+  height: 20px;
+}
