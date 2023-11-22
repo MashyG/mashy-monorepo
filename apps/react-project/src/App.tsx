@@ -8,16 +8,19 @@ import "@mashy-monorepo/web-component";
 import HelloworldComp from "./components/Helloworld";
 import Communication from "./components/Communication";
 import CommunicateByRef from "./components/CommunicateByRef";
-import CssModule from "./components/CssModule";
+import CssModule from "./components/CSSModule";
 import ContextComp from "./components/Context";
 import RenderComp from "./components/Render";
 import RenderMoreData from "./components/RenderMoreData";
+import EventSystem from "./components/EventSystem";
 
 function App() {
   return (
     <>
       <div>
         <h1>Study for React 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
+        <EventSystem />
+        <div>==========================</div>
         <RenderMoreData />
         <div>==========================</div>
         <RenderComp />

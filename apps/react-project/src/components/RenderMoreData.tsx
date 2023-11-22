@@ -70,7 +70,11 @@ export default () => {
   };
   return (
     <div>
-      {btnShow && <button onClick={handleClick}>show</button>}
+      {btnShow ? (
+        <button onClick={handleClick}>show</button>
+      ) : (
+        !show && <div>加载中...</div>
+      )}
       {show && <BigDataComp />}
     </div>
   );
