@@ -14,11 +14,22 @@ import RenderComp from "./components/Render";
 import RenderMoreData from "./components/RenderMoreData";
 import EventSystem from "./components/EventSystem";
 
+import Store from "./store";
+import { CompA, CompB, ShowInfoComp } from "./components/ReactRedux";
+import { Provider } from "react-redux";
+
 function App() {
   return (
     <>
       <div>
         <h1>Study for React 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
+        <Provider store={Store}>
+          <ShowInfoComp />
+          <div>==========================</div>
+          <CompA />
+          <CompB />
+        </Provider>
+        <div>==========================</div>
         <EventSystem />
         <div>==========================</div>
         <RenderMoreData />
