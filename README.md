@@ -1,6 +1,7 @@
 # Mashy monorepo
 
-packages/shared
+[docs](./packages/docs)
+...more pkg
 
 apps/vue-project
 
