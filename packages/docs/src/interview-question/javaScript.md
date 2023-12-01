@@ -1,21 +1,20 @@
 # Promise
 
-````js
+```js
 // 定义 Promise 类
-class Promise {
+class MyPromise {
   constructor(executor) {
-    this.state = "pending"; // Promise 的状态
-    this.value = undefined; // Promise 的结果值
-    this.reason = undefined; // Promise 的拒因
-    this.onResolvedCallbacks = []; // 存储 resolve 回调函数的数组
-    this.onRejectedCallbacks = []; // 存储 reject 回调函数的数组
+    this.state = "pending";
+    this.value = undefined;
+    this.reason = undefined;
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
 
     const resolve = (value) => {
       if (this.state === "pending") {
         this.state = "fulfilled";
         this.value = value;
-        // 依次执行所有的 resolve 回调函数
-        this.onResolvedCallbacks.forEach((callback) => callback());
+        this.onFulfilledCallbacks.forEach((callback) => callback(this.value));
       }
     };
 
@@ -23,134 +22,82 @@ class Promise {
       if (this.state === "pending") {
         this.state = "rejected";
         this.reason = reason;
-        // 依次执行所有的 reject 回调函数
-        this.onRejectedCallbacks.forEach((callback) => callback());
+        this.onRejectedCallbacks.forEach((callback) => callback(this.reason));
       }
     };
 
     try {
-      // 执行执行器函数，并传入 resolve 和 reject 函数
       executor(resolve, reject);
     } catch (error) {
-      // 如果执行器函数抛出异常，则直接拒绝 Promise
       reject(error);
     }
   }
 
   then(onFulfilled, onRejected) {
-    // 处理参数默认值，使其成为可选参数
-    onFulfilled =
+    const fulfilledHandler =
       typeof onFulfilled === "function" ? onFulfilled : (value) => value;
-    onRejected =
+    const rejectedHandler =
       typeof onRejected === "function"
         ? onRejected
         : (reason) => {
             throw reason;
           };
 
-    // 创建一个新的 Promise
-    const promise2 = new Promise((resolve, reject) => {
-      if (this.state === "fulfilled") {
-        // 如果当前 Promise 已经是 fulfilled 状态，则异步执行 onFulfilled 回调函数
-        setTimeout(() => {
-          try {
-            const x = onFulfilled(this.value);
-            // 处理 onFulfilled 返回值与 promise2 之间的关系
-            Promise.resolvePromise(promise2, x, resolve, reject);
-          } catch (error) {
-            reject(error);
-          }
-        }, 0);
-      } else if (this.state === "rejected") {
-        // 如果当前 Promise 已经是 rejected 状态，则异步执行 onRejected 回调函数
-        setTimeout(() => {
-          try {
-            const x = onRejected(this.reason);
-            // 处理 onRejected 返回值与 promise2 之间的关系
-            Promise.resolvePromise(promise2, x, resolve, reject);
-          } catch (error) {
-            reject(error);
-          }
-        }, 0);
-      } else if (this.state === "pending") {
-        // 如果当前 Promise 还是 pending 状态，则将 onFulfilled 和 onRejected 回调函数存入数组，等待执行
-        this.onResolvedCallbacks.push(() => {
-          setTimeout(() => {
-            try {
-              const x = onFulfilled(this.value);
-              // 处理 onFulfilled 返回值与 promise2 之间的关系
-              Promise.resolvePromise(promise2, x, resolve, reject);
-            } catch (error) {
-              reject(error);
-            }
-          }, 0);
-        });
+    const promise = new MyPromise((resolve, reject) => {
+      const fulfillCallback = () => {
+        try {
+          const result = fulfilledHandler(this.value);
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      };
 
-        this.onRejectedCallbacks.push(() => {
-          setTimeout(() => {
-            try {
-              const x = onRejected(this.reason);
-              // 处理 onRejected 返回值与 promise2 之间的关系
-              Promise.resolvePromise(promise2, x, resolve, reject);
-            } catch (error) {
-              reject(error);
-            }
-          }, 0);
-        });
+      const rejectCallback = () => {
+        try {
+          const result = rejectedHandler(this.reason);
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      if (this.state === "fulfilled") {
+        setTimeout(fulfillCallback, 0);
+      } else if (this.state === "rejected") {
+        setTimeout(rejectCallback, 0);
+      } else {
+        this.onFulfilledCallbacks.push(fulfillCallback);
+        this.onRejectedCallbacks.push(rejectCallback);
       }
     });
 
-    return promise2;
+    return promise;
   }
 
   catch(onRejected) {
     return this.then(null, onRejected);
   }
 
-  static resolvePromise(promise2, x, resolve, reject) {
-    if (promise2 === x) {
-      // 如果 promise2 和 x 引用同一个对象，则抛出循环引用错误
-      return reject(new TypeError("Chaining cycle detected for promise"));
-    }
+  finally(onFinally) {
+    return this.then(
+      (value) => MyPromise.resolve(onFinally()).then(() => value),
+      (reason) =>
+        MyPromise.resolve(onFinally()).then(() => {
+          throw reason;
+        })
+    );
+  }
 
-    if (x instanceof Promise) {
-      // 如果 x 是一个 Promise，则等待该 Promise 的状态确定
-      x.then(
-        (value) => Promise.resolvePromise(promise2, value, resolve, reject),
-        (reason) => reject(reason)
-      );
-    } else if (typeof x === "object" || typeof x === "function") {
-      if (x === null) {
-        // 如果 x 是 null，则直接将其视为普通对象处理```javascript
-        resolve(x);
-      } else {
-        try {
-          // 尝试获取 x.then 的值
-          const then = x.then;
-          if (typeof then === "function") {
-            // 如果 then 是一个函数，则将 x 视为一个 Promise，并等待其状态确定
-            then.call(
-              x,
-              (value) =>
-                Promise.resolvePromise(promise2, value, resolve, reject),
-              (reason) => reject(reason)
-            );
-          } else {
-            // 如果 then 不是一个函数，则将 x 视为普通对象处理
-            resolve(x);
-          }
-        } catch (error) {
-          // 如果获取 x.then 的值抛出异常，则将异常作为拒因拒绝 promise2
-          reject(error);
-        }
-      }
-    } else {
-      // 如果 x 是一个普通值，则直接将其视为 Promise 的结果值
-      resolve(x);
-    }
+  static resolve(value) {
+    return new MyPromise((resolve) => resolve(value));
+  }
+
+  static reject(reason) {
+    return new MyPromise((resolve, reject) => reject(reason));
   }
 }
-````
+```
 
 # 无感刷新 token
 

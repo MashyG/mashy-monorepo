@@ -15,154 +15,100 @@
 // 14. 如果返回的是一个 promise 对象，状态为失败，调用 reject
 // 15. errorCaptured
 // 26. finally
-function Promise(executor) {
-  var self = this;
-  self.state = "pending";
-  self.value = undefined;
-  self.reason = undefined;
-  self.onResolvedCallbacks = [];
-  self.onRejectedCallbacks = [];
-  self.finallyCallbacks = [];
 
-  function resolve(value) {
-    if (self.state === "pending") {
-      self.state = "fulfilled";
-      self.value = value;
-      self.onResolvedCallbacks.forEach(function (callback) {
-        callback();
-      });
-      self.finallyCallbacks.forEach(function (callback) {
-        callback();
-      });
-    }
-  }
+class MyPromise {
+  constructor(executor) {
+    this.state = "pending";
+    this.value = undefined;
+    this.reason = undefined;
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
 
-  function reject(reason) {
-    if (self.state === "pending") {
-      self.state = "rejected";
-      self.reason = reason;
-      self.onRejectedCallbacks.forEach(function (callback) {
-        callback();
-      });
-      self.finallyCallbacks.forEach(function (callback) {
-        callback();
-      });
-    }
-  }
+    const resolve = (value) => {
+      if (this.state === "pending") {
+        this.state = "fulfilled";
+        this.value = value;
+        this.onFulfilledCallbacks.forEach((callback) => callback(this.value));
+      }
+    };
 
-  try {
-    executor(resolve, reject);
-  } catch (error) {
-    reject(error);
-  }
-}
-
-Promise.prototype.then = function (onFulfilled, onRejected) {
-  var self = this;
-  onFulfilled =
-    typeof onFulfilled === "function"
-      ? onFulfilled
-      : function (value) {
-          return value;
-        };
-  onRejected =
-    typeof onRejected === "function"
-      ? onRejected
-      : function (reason) {
-          throw reason;
-        };
-
-  var promise2 = new Promise(function (resolve, reject) {
-    function handleFulfilled() {
-      setTimeout(function () {
-        try {
-          var x = onFulfilled(self.value);
-          resolvePromise(promise2, x, resolve, reject);
-        } catch (error) {
-          reject(error);
-        }
-      }, 0);
-    }
-
-    function handleRejected() {
-      setTimeout(function () {
-        try {
-          var x = onRejected(self.reason);
-          resolvePromise(promise2, x, resolve, reject);
-        } catch (error) {
-          reject(error);
-        }
-      }, 0);
-    }
-
-    if (self.state === "fulfilled") {
-      handleFulfilled();
-    } else if (self.state === "rejected") {
-      handleRejected();
-    } else if (self.state === "pending") {
-      self.onResolvedCallbacks.push(handleFulfilled);
-      self.onRejectedCallbacks.push(handleRejected);
-    }
-  });
-
-  return promise2;
-};
-
-Promise.prototype.catch = function (onRejected) {
-  return this.then(null, onRejected);
-};
-
-Promise.prototype.finally = function (onFinally) {
-  var self = this;
-
-  return self.then(
-    function (value) {
-      return Promise.resolve(onFinally()).then(function () {
-        return value;
-      });
-    },
-    function (reason) {
-      return Promise.resolve(onFinally()).then(function () {
-        throw reason;
-      });
-    }
-  );
-};
-
-function resolvePromise(promise, x, resolve, reject) {
-  if (promise === x) {
-    return reject(new TypeError("Chaining cycle detected for promise"));
-  }
-
-  if (x && (typeof x === "object" || typeof x === "function")) {
-    var called = false;
+    const reject = (reason) => {
+      if (this.state === "pending") {
+        this.state = "rejected";
+        this.reason = reason;
+        this.onRejectedCallbacks.forEach((callback) => callback(this.reason));
+      }
+    };
 
     try {
-      var then = x.then;
-
-      if (typeof then === "function") {
-        then.call(
-          x,
-          function (value) {
-            if (called) return;
-            called = true;
-            resolvePromise(promise, value, resolve, reject);
-          },
-          function (reason) {
-            if (called) return;
-            called = true;
-            reject(reason);
-          }
-        );
-      } else {
-        resolve(x);
-      }
+      executor(resolve, reject);
     } catch (error) {
-      if (called) return;
-      called = true;
       reject(error);
     }
-  } else {
-    resolve(x);
+  }
+
+  then(onFulfilled, onRejected) {
+    const fulfilledHandler =
+      typeof onFulfilled === "function" ? onFulfilled : (value) => value;
+    const rejectedHandler =
+      typeof onRejected === "function"
+        ? onRejected
+        : (reason) => {
+            throw reason;
+          };
+
+    const promise = new MyPromise((resolve, reject) => {
+      const fulfillCallback = () => {
+        try {
+          const result = fulfilledHandler(this.value);
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      const rejectCallback = () => {
+        try {
+          const result = rejectedHandler(this.reason);
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      if (this.state === "fulfilled") {
+        setTimeout(fulfillCallback, 0);
+      } else if (this.state === "rejected") {
+        setTimeout(rejectCallback, 0);
+      } else {
+        this.onFulfilledCallbacks.push(fulfillCallback);
+        this.onRejectedCallbacks.push(rejectCallback);
+      }
+    });
+
+    return promise;
+  }
+
+  catch(onRejected) {
+    return this.then(null, onRejected);
+  }
+
+  finally(onFinally) {
+    return this.then(
+      (value) => MyPromise.resolve(onFinally()).then(() => value),
+      (reason) =>
+        MyPromise.resolve(onFinally()).then(() => {
+          throw reason;
+        })
+    );
+  }
+
+  static resolve(value) {
+    return new MyPromise((resolve) => resolve(value));
+  }
+
+  static reject(reason) {
+    return new MyPromise((resolve, reject) => reject(reason));
   }
 }
+// 解析以上类Promise的底层实现思想
