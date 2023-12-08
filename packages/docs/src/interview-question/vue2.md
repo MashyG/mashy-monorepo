@@ -58,6 +58,7 @@
 - ② 如果 `dirty` 是 `false`，说明依赖的数据没有变化，那么 `watcher` 就不会重新运行 `getter` 函数，而是直接返回上一次计算的结果。
 
 ```ts
+// Vue2 源码（src\core\instance\state.ts）
 function createComputedGetter(key) {
   return function computedGetter() {
     const watcher = this._computedWatchers && this._computedWatchers[key];
@@ -81,3 +82,18 @@ function createComputedGetter(key) {
   };
 }
 ```
+
+# 计算属性 `computed` 和 侦听属性 `watch` 有何区别？
+
+1. 从**使用场**景来看：计算属性适合用在模板渲染中，某个值是*依赖了其它的响应式对象甚至是其它计算属性计算得来的*；而侦听属性适用于*观测某个值的变化去完成一段复杂的业务逻辑*。
+2. 从**内部实现**来看：计算属性和侦听属性在 Vue 内部都是通过 watcher 来实现的，但是它们的工作方式不同。计算属性的 watcher 会*缓存*计算结果，并且只有在依赖数据改变时才会重新计算。而侦听属性的 watcher 在数据每次改变时都会执行回调函数。
+
+# `watch` 内部实现是怎样的？
+
+在 Vue 中，watch 选项的内部实现主要依赖于 Vue 的响应式系统和 Watcher 类。
+
+当你在 Vue 实例中定义了 watch 选项时，Vue 会遍历 watch 对象的每一个属性，对每一个属性创建一个 Watcher 实例。这个 Watcher 实例的任务就是观察它所对应的属性值的变化。
+
+Watcher 实例在创建时，会读取它所对应的属性的当前值，并收集这个属性的依赖。这个过程是通过调用属性的 getter 函数完成的。在这个过程中，Watcher 实例会被添加到这个属性的依赖列表中。
+
+当这个属性的值发生变化时，Vue 的响应式系统会通知所有依赖这个属性的 Watcher 实例。Watcher 实例在接到通知后，会重新读取属性的新值，并调用 watch 选项中定义的回调函数，将新值和旧值作为参数传入。
