@@ -12,14 +12,36 @@
 # `key` 有什么作用？
 
 `key` 是一个特殊的属性，主要用于 Vue 的虚拟 DOM 算法，在新旧 nodes 对比时辨识 VNodes。
-如果不使用 `key`，Vue 会使用一种最大限度减少动态元素并尽可能的尝试就地修改/复用相同类型元素的**算法 ①** 。而使用 key，它会基于 `key` 的变化重新排列元素顺序，并且会移除 `key` 不存在的元素。
+如果不使用 `key`，Vue 会使用一种最大限度减少动态元素并尽可能的尝试就地修改/复用相同类型元素的**算法 ①**。而使用 key，它会基于 `key` 的变化重新排列元素顺序，并且会移除 `key` 不存在的元素。
 
 有了 `key`，Vue 可以更准确地判断哪些元素对应哪些节点，从而更准确地进行 DOM 更新，提高应用性能。
 
 > **①** “就地更新”：主要思想是尽可能地复用现有的 DOM 节点，而不是创建新的节点。
-> 在进行列表渲染时，如果没有提供 key 属性，Vue 会尽量就地复用和修改 DOM 节点，而不是移动或删除旧节点然后创建新节点。这样可以提高渲染性能，因为操作 DOM 是非常消耗性能的。
+> 在进行列表渲染时，如果没有提供 key 属性，Vue 会尽量就地复用和修改 DOM 节点，而不是移动或删除旧节点然后创建新节点，且*重新渲染时对整个列表进行更新*。这样可以**提高渲染性能**，因为操作 DOM 是非常消耗性能的。
 >
 > 但是，这种就地复用的策略有时候可能会导致一些不可预期的行为，特别是在涉及到状态保持或者节点的生命周期钩子函数时。因此，Vue 推荐在进行列表渲染时，总是提供 key 属性。
+
+```ts
+// 源码（src\core\vdom\patch.ts）
+function updateChildren() {}
+// 使用了「头尾指针」和「标记索引」的方式来进行比较和移动子节点
+/**
+ * updateChildren 方法的主要工作流程：
+ * 1. 初始化头尾指针和标记索引。
+ * 2. 进入循环，比较新旧子节点列表，直到头尾指针相遇为止。
+ * 3. 在循环中，依次比较新旧子节点列表中的节点：
+ *
+ *    - 如果新旧节点相同（通过 sameVnode 函数判断），则进行「patchVnode」操作，即更新节点。
+ *    - 如果新旧节点不同，则尝试在旧节点列表中找到与当前新节点相同的节点：
+ *    - 如果找到了相同的节点，在新节点之前的旧节点中，将该节点移动到正确的位置，并更新节点。
+ *    - 如果没有找到相同的节点，则创建新节点并插入到正确的位置。
+ *
+ * 4. 循环结束后，检查是否还有剩余的旧节点或新节点：
+ *
+ *    - 如果有剩余的旧节点，说明新节点列表比旧节点列表短，需要将剩余的旧节点删除。
+ *    - 如果有剩余的新节点，说明新节点列表比旧节点列表长，需要将剩余的新节点插入到正确的位置。
+ */
+```
 
 # `虚拟 DOM` 和 `diff` 算法的原理？
 
@@ -97,3 +119,107 @@ function createComputedGetter(key) {
 Watcher 实例在创建时，会读取它所对应的属性的当前值，并收集这个属性的依赖。这个过程是通过调用属性的 getter 函数完成的。在这个过程中，Watcher 实例会被添加到这个属性的依赖列表中。
 
 当这个属性的值发生变化时，Vue 的响应式系统会通知所有依赖这个属性的 Watcher 实例。Watcher 实例在接到通知后，会重新读取属性的新值，并调用 watch 选项中定义的回调函数，将新值和旧值作为参数传入。
+
+# `v-model` 的实现原理？
+
+> 实现原理可以分为两个方面：属性绑定和事件绑定。
+>
+> 属性绑定：当使用 v-model 指令时，Vue 会将一个值绑定到表单元素或组件的 value 属性（或 checked、selected 等属性）上。这样，当用户输入或选择内容时，实际上是在改变这个值。同时，Vue 还会为这个元素或组件注册一个 input 事件监听器。
+>
+> 事件绑定：当用户在表单元素中输入内容时，例如输入框中键入文字，Vue 会捕获到 input 事件。然后，Vue 会更新与 v-model 指令绑定的数据模型，将输入的值赋给这个模型。这样，数据模型的变化会自动反映到表单元素上，实现了双向数据绑定。
+>
+> 简而言之，v-model 指令通过属性绑定将数据模型与表单元素或组件的属性进行绑定，并通过事件绑定将用户的输入同步到数据模型中，从而实现了双向的数据绑定。
+
+假设我们有一个简单的 Vue 组件，它是一个输入框组件，可以接受用户的输入并将其显示出来。组件代码如下：
+
+```vue
+<template>
+  <input
+    v-bind:value="inputValue"
+    v-on:input="updateValue($event.target.value)"
+  />
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      inputValue: "",
+    };
+  },
+  methods: {
+    updateValue(value) {
+      this.inputValue = value;
+    },
+  },
+};
+</script>
+```
+
+在这个组件中，我们使用了`v-model`指令，它绑定了`inputValue`这个数据模型。下面是一个使用该组件的示例：
+
+```vue
+<template>
+  <div>
+    <my-input v-model="message"></my-input>
+    <p>输入的内容：{{ message }}</p>
+  </div>
+</template>
+
+<script>
+import MyInput from "./MyInput.vue";
+
+export default {
+  components: {
+    MyInput,
+  },
+  data() {
+    return {
+      message: "",
+    };
+  },
+};
+</script>
+```
+
+在这个示例中，我们在父组件中使用了`v-model="message"`，这意味着`message`变量将与子组件的`inputValue`数据模型进行双向绑定。
+
+当用户在输入框中输入内容时，输入框的`input`事件将被触发。然后，子组件的`updateValue`方法会被调用，将输入框的值更新到`inputValue`数据模型中。由于双向绑定的机制，`message`变量也会相应地更新。因此，无论是在输入框中输入内容，还是在`<p>`标签中显示的内容，都会保持同步。
+
+# `.sync`、`.lazy`、`.number` 和 `.trim` 修饰符的作用？
+
+# `Object.defineProperty` 和 `Proxy` 区别
+
+> `Proxy` 提供了更全面和强大的拦截能力，但 `Object.defineProperty` 在处理单个属性时可能更简单和直接
+
+`Object.defineProperty` 和 `Proxy` 都可以用来拦截和定义对象的行为，但它们在使用方式和能力上有一些重要的区别。
+
+1. `Object.defineProperty` 可以用来**精确地添加或修改对象的属性**。你可以控制属性的可枚举性、可配置性和可写性，还可以定义 `getter` 和 `setter` 函数。然而，`Object.defineProperty` 只能作用于单个属性。
+
+```js
+let obj = {};
+Object.defineProperty(obj, "prop", {
+  value: "hello",
+  writable: false,
+  enumerable: true,
+  configurable: true,
+});
+```
+
+2. `Proxy` 提供了一种**机制**，可以**定义或修改基本操作的行为**，如属性查找、赋值、枚举、函数调用等。与 `Object.defineProperty` 不同，`Proxy` 可以拦截对象的所有属性，不仅仅是一个。
+
+```js
+let obj = new Proxy(
+  {},
+  {
+    get: function (target, prop, receiver) {
+      console.log(`getting ${prop}!`);
+      return Reflect.get(target, prop, receiver);
+    },
+    set: function (target, prop, value, receiver) {
+      console.log(`setting ${prop}!`);
+      return Reflect.set(target, prop, value, receiver);
+    },
+  }
+);
+```
