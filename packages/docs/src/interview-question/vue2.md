@@ -188,6 +188,11 @@ export default {
 
 # `.sync`、`.lazy`、`.number` 和 `.trim` 修饰符的作用？
 
+- `.sync` 是一个特殊的修饰符，用于实现子组件和父组件之间的双向数据绑定。这是一个简化的替代方案，用于代替在子组件中触发一个事件，然后在父组件中响应这个事件来更新一个 prop 的值。
+- `.lazy`：在 v-model 中使用，用于改变输入框的更新时机。默认情况下，v-model 在每次 input 事件触发后将输入框的值与数据进行同步。使用 .lazy 修饰符后，变为在 change 事件触发后同步。
+- `.number`：如果想自动将用户的输入值转为 Number 类型（如果原始值的转换结果为 NaN 则返回原始值），可以添加一个 number 修饰符到 v-model 上处理输入值。
+- `.trim`：如果要自动过滤用户输入的首尾空白字符，可以添加 trim 修饰符到 v-model 上处理输入值。
+
 # `Object.defineProperty` 和 `Proxy` 区别
 
 > `Proxy` 提供了更全面和强大的拦截能力，但 `Object.defineProperty` 在处理单个属性时可能更简单和直接
