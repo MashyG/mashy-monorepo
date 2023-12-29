@@ -1,0 +1,20 @@
+{
+  "name": "electron-vite-vue3",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "child_process": "^1.0.2",
+    "electron": "^28.1.0",
+    "esbuild": "^0.19.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vue": "^3.3.11",
+    "vue-tsc": "^1.8.25"
+  }
+}
