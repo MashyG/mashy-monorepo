@@ -41,6 +41,9 @@ importers:
       vite:
         specifier: ^5.0.8
         version: registry.npmmirror.com/vite@5.0.10
+      vite-plugin-optimizer:
+        specifier: ^1.4.3
+        version: registry.npmmirror.com/vite-plugin-optimizer@1.4.3
       vue:
         specifier: ^3.3.11
         version: registry.npmmirror.com/vue@3.4.0(typescript@5.2.2)
@@ -6165,6 +6168,12 @@ packages:
     dependencies:
       react: registry.npmjs.org/react@18.2.0
     dev: false
+
+  registry.npmmirror.com/vite-plugin-optimizer@1.4.3:
+    resolution: {integrity: sha512-m1AFakemDxSNIwxsTYykBFuQxkKJLI8207RNAg33N5km2aE29cP+Jt41xbfdrALOU2VKYWGFlBz64GMbIser4A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vite-plugin-optimizer/-/vite-plugin-optimizer-1.4.3.tgz}
+    name: vite-plugin-optimizer
+    version: 1.4.3
+    dev: true
 
   registry.npmmirror.com/vite@4.5.0(@types/node@20.8.6):
     resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vite/-/vite-4.5.0.tgz}

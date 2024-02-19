@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
+
+// 渲染进程可以正确加载内置模块
+import fs from "fs";
+import { ipcRenderer } from "electron";
+import { onMounted } from "vue";
+onMounted(() => {
+  console.log(fs.writeFileSync);
+  console.log(ipcRenderer);
+});
 </script>
 
 <template>
@@ -11,6 +20,7 @@ import HelloWorld from './components/HelloWorld.vue'
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
+  <p>mashy</p>
   <HelloWorld msg="Vite + Vue" />
 </template>
 
