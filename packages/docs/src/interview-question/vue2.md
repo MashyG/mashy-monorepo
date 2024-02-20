@@ -193,7 +193,7 @@ export default {
 - `.number`：如果想自动将用户的输入值转为 Number 类型（如果原始值的转换结果为 NaN 则返回原始值），可以添加一个 number 修饰符到 v-model 上处理输入值。
 - `.trim`：如果要自动过滤用户输入的首尾空白字符，可以添加 trim 修饰符到 v-model 上处理输入值。
 
-# `Object.defineProperty` 和 `Proxy` 区别
+# 响应式原理中 `Object.defineProperty` 和 `Proxy` 区别
 
 > `Proxy` 提供了更全面和强大的拦截能力，但 `Object.defineProperty` 在处理单个属性时可能更简单和直接
 
@@ -228,3 +228,114 @@ let obj = new Proxy(
   }
 );
 ```
+
+# `keep-alive` 是什么？有什么作用？有哪些生命周期钩子函数？与在 Vue3 中的区别？
+
+> `<keep-alive>` 是 Vue 提供的一个**抽象组件**，用于保留组件状态或避免重新渲染。
+
+## 作用
+
+- 保留组件状态：当组件在 <keep-alive> 内部被切换时，组件实例不会被销毁，而是被缓存起来，下次再切换回来时，可以直接从缓存中恢复，而不需要重新创建和渲染。
+
+- 避免重新渲染：由于组件实例被缓存，所以当组件切换时，不需要重新渲染，可以提高性能。
+
+```html
+<!-- currentTabComponent 可以动态切换，但无论切换到哪个组件，都会被 <keep-alive> 缓存起来。 -->
+<keep-alive>
+  <component :is="currentTabComponent"></component>
+</keep-alive>
+```
+
+## 区别
+
+- 在 Vue 2 中，`<keep-alive>` 提供了 `include、exclude` 属性来决定哪些组件可以被缓存，这两个属性接受字符串或正则表达式。
+
+- 在 Vue 3 中，`<keep-alive>` 的 `include、exclude` 属性被移除，取而代之的是 `max` 属性，用于限制被缓存组件的数量。
+
+## 生命周期钩子函数
+
+1. `activated`：当组件被激活时触发。
+2. `deactivated`：当组件被停用时触发。
+
+# `nextTick`
+
+> `Vue.nextTick()` 是 Vue 的一个全局 API，用于延迟执行一段代码，使其在下次 DOM 更新循环结束之后执行。这在修改数据之后立即使用 DOM 可能还没更新的情况下非常有用。
+
+## `nextTick` 作用
+
+1. **延迟执行代码**: Vue.nextTick() 可以接受一个回调函数作为参数，在下次 DOM 更新循环结束之后执行该回调函数。
+2. **返回 Promise**: 如果没有提供回调函数，Vue.nextTick() 返回一个 Promise。
+
+### **注意**
+
+在 Vue 3 中，由于 Vue 的全局 API 已经被移除，nextTick() 现在是一个导出的函数，需要单独导入。
+
+## `nextTick` 实现原理
+
+Vue 的 nextTick 函数的实现主要涉及到 JavaScript 的**事件循环**和**微任务队列**。
+
+> 在 JavaScript 中，有一个称为事件循环的概念，它负责处理异步任务。事件循环有一个微任务队列，用于存放所有的微任务。Promise 的回调函数就是一个典型的微任务。
+
+> 如果环境不支持 Promise，Vue 会尝试使用其他的异步 API，如 MutationObserver 或 setImmediate，如果这些 API 也不支持，最后会退化到使用 setTimeout。
+
+# Vuex 中的 `mutations` 为什么是同步的？
+
+1. **易于追踪状态变化**：Vuex 使用单一状态树，所有的状态都是响应式的。当我们在组件中改变状态时，视图会自动更新。如果 mutations 是异步的，那么我们就无法准确地追踪状态在何时何地被改变，这使得状态的变化变得难以追踪。
+
+2. **保证数据一致性**：如果允许异步修改状态，可能会导致在一个 mutation 完成前，另一个 mutation 已经开始执行，这可能会导致数据不一致。
+
+3. **Devtools 的时间旅行功能**：Vuex 配合 devtools 可以做到时间旅行的功能，即在开发过程中，你可以任意地切换状态的历史快照，以便查看不同状态下的应用界面。如果 mutations 是异步的，那么这个功能就无法正确地工作。
+
+# `slot`
+
+> 在 Vue 中，slot 是一种分发内容的机制，允许我们在组件模板中插入子组件或者文本。
+
+## 默认插槽
+
+> 如果在子组件模板中使用 `<slot></slot>`，那么父组件在使用子组件时，可以在子组件标签内部写入内容，这些内容会替换掉子组件模板中的 `<slot></slot>`。
+
+```html
+<!-- 子组件 -->
+<template>
+  <div>
+    <slot></slot>
+  </div>
+</template>
+
+<!-- 父组件 -->
+<template>
+  <ChildComponent>这是插槽内容</ChildComponent>
+</template>
+```
+
+## 具名插槽
+
+> 可以使用 slot 属性给插槽命名，然后在父组件中使用 <template v-slot:插槽名> 来向具名插槽提供内容。
+
+```html
+<!-- 子组件 -->
+<template>
+  <div>
+    <slot name="header"></slot>
+    <slot></slot>
+    <slot name="footer"></slot>
+  </div>
+</template>
+
+<!-- 父组件 -->
+<template>
+  <ChildComponent>
+    <template v-slot:header>这是头部插槽内容</template>
+    这是默认插槽内容
+    <template v-slot:footer>这是底部插槽内容</template>
+  </ChildComponent>
+</template>
+```
+
+## 与 Vue3 的区别
+
+在 Vue 2 和 Vue 3 中，slot 的不同之处主要在于作用域插槽的语法变化：
+
+- 在 Vue 2 中，作用域插槽的语法是 `<slot name="xxx" :data="data"></slot>` 和 `<template slot="xxx" slot-scope="props"></template>`。
+
+- 在 Vue 3 中，作用域插槽的语法变为 `<slot name="xxx" :data="data"></slot>` 和 `<template v-slot:xxx="props"></template>`。
