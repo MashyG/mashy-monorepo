@@ -4,6 +4,7 @@
   "description": "",
   "type": "module",
   "main": "dist/index.js",
+  "typings": "types.d.ts",
   "scripts": {
     "build": "rollup -c",
     "build-by-js": "node scripts/build.js"

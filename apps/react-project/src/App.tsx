@@ -17,11 +17,17 @@ import EventSystem from "./components/EventSystem";
 import Store from "./store";
 import { CompA, CompB, ShowInfoComp } from "./components/ReactRedux";
 import { Provider } from "react-redux";
+import { useState } from "react";
 
-function App() {
+const getStyles = (val: boolean) => {
+  return { display: val ? "block" : "none" };
+};
+function ReactDom() {
+  const [showReact, setShowReact] = useState(false);
   return (
     <>
-      <div>
+      <button onClick={() => setShowReact(!showReact)}>showReactDom</button>
+      <div style={getStyles(showReact)}>
         <h1>Study for React 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
         <Provider store={Store}>
           <ShowInfoComp />
@@ -46,15 +52,48 @@ function App() {
         <div>==========================</div>
         <HelloworldComp />
       </div>
-      <div>
+    </>
+  );
+}
+
+function VueDom() {
+  const [showVue, setShowVue] = useState(false);
+  return (
+    <>
+      <button onClick={() => setShowVue(!showVue)}>showVueDom</button>
+      <div style={getStyles(showVue)}>
         <h1>下面是Vue项目 Web-Component 注入 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
         <my-vue-app />
       </div>
-      ===============================================================
-      <div>
+    </>
+  );
+}
+
+function HelloBtn() {
+  const [showBtn, setShowBtn] = useState(false);
+  return (
+    <>
+      <button onClick={() => setShowBtn(!showBtn)}>showHelloBtn</button>
+      <div style={getStyles(showBtn)}>
         <h1>click button to show message 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
         <button onClick={() => sayHello("world!!!")}>hello</button>
       </div>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <>
+      {ReactDom()}
+      <div style={{ color: "yellowgreen" }}>
+        ******************************************
+      </div>{" "}
+      {VueDom()}
+      <div style={{ color: "yellowgreen" }}>
+        ******************************************
+      </div>{" "}
+      {HelloBtn()}
     </>
   );
 }
