@@ -11,7 +11,7 @@ export default function EventSystemIndex() {
       refObj.current.removeEventListener("click", handler);
     };
   }, []);
-  const handleClick = (e: any) => {
+  const handleClick = () => {
     // console.log("handleClick", e);
     // e.stopPropagation(); /* 阻止事件冒泡，handleFatherClick 事件讲不在触发 */
     console.log("冒泡阶段执行");

@@ -17,7 +17,7 @@ import EventSystem from "./components/EventSystem";
 import Store from "./store";
 import { CompA, CompB, ShowInfoComp } from "./components/ReactRedux";
 import { Provider } from "react-redux";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const getStyles = (val: boolean) => {
   return { display: val ? "block" : "none" };
@@ -29,27 +29,28 @@ function ReactDom() {
       <button onClick={() => setShowReact(!showReact)}>showReactDom</button>
       <div style={getStyles(showReact)}>
         <h1>Study for React 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻</h1>
+        <div>============= React-Redux =============</div>
         <Provider store={Store}>
           <ShowInfoComp />
           <div>==========================</div>
           <CompA />
           <CompB />
         </Provider>
-        <div>==========================</div>
+        <div>============= EventSystem =============</div>
         <EventSystem />
-        <div>==========================</div>
+        <div>============= RenderMoreData =============</div>
         <RenderMoreData />
-        <div>==========================</div>
+        <div>============ RenderComp ==============</div>
         <RenderComp />
-        <div>==========================</div>
+        <div>============ ContextComp ==============</div>
         <ContextComp />
-        <div>==========================</div>
+        <div>============ CssModule ==============</div>
         <CssModule />
-        <div>==========================</div>
+        <div>============ CommunicateByRef ==============</div>
         <CommunicateByRef />
-        <div>==========================</div>
+        <div>============ Communication ==============</div>
         <Communication />
-        <div>==========================</div>
+        <div>============= HelloworldComp =============</div>
         <HelloworldComp />
       </div>
     </>
@@ -82,18 +83,65 @@ function HelloBtn() {
   );
 }
 
+function FormItem() {
+  const [inputVal, setValue] = useState("");
+  const inputRef = useRef(null);
+  const showInputDom = () => {
+    console.log(inputRef?.current);
+  };
+
+  const [showCountDom, setShow] = useState(true);
+  function CountDom() {
+    const [count, setCount] = useState(0);
+    // Similar to componentDidMount and componentDidUpdate: 1st render and every update
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setCount(count + 1);
+      }, 2000);
+
+      // return a function to clean up
+      return () => {
+        console.log("useEffect return", count);
+        clearInterval(timer);
+      };
+    }, [count]);
+    return <div>count：{count}</div>;
+  }
+
+  return (
+    <>
+      <input
+        ref={inputRef}
+        type="text"
+        value={inputVal}
+        onChange={(val) => setValue(val.target.value)}
+        placeholder="input sth..."
+      />
+      <button onClick={showInputDom}>getInputDom2Console</button>
+      <div>
+        CountDom：{showCountDom && <CountDom />}
+        <button onClick={() => setShow(false)}>hideCountDom</button>
+      </div>
+    </>
+  );
+}
+
 function App() {
   return (
     <>
-      {ReactDom()}
+      {<ReactDom />}
       <div style={{ color: "yellowgreen" }}>
         ******************************************
       </div>{" "}
-      {VueDom()}
+      {<VueDom />}
       <div style={{ color: "yellowgreen" }}>
         ******************************************
       </div>{" "}
-      {HelloBtn()}
+      {<HelloBtn />}
+      <div style={{ color: "yellowgreen" }}>
+        ******************************************
+      </div>{" "}
+      {<FormItem />}
     </>
   );
 }

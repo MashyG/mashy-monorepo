@@ -74,7 +74,7 @@ export function ShowInfo(props: any) {
       payload: { name: "mashy", mes: "let us learn React-Redux!" },
     });
   }, []);
-  const { info, number }: any = props;
+  const { info, number } = props;
 
   return (
     <div>

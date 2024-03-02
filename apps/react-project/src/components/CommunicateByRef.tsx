@@ -6,8 +6,8 @@ import React, {
 } from "react";
 
 // 子组件
-const Son = (_, ref) => {
-  const inputRef = useRef(null);
+const Son = (_: any, ref: any) => {
+  const inputRef: any = useRef(null);
   const [inputValue, setInputValue] = useState("");
   useImperativeHandle(
     ref,
@@ -15,9 +15,9 @@ const Son = (_, ref) => {
       const handleRefs = {
         onFocus() {
           /* 声明方法用于聚焦input框 */
-          inputRef.current.focus();
+          inputRef?.current?.focus();
         },
-        onChangeValue(value) {
+        onChangeValue(value: any) {
           /* 声明方法用于改变input的值 */
           setInputValue(value);
         },
@@ -41,7 +41,7 @@ const Son = (_, ref) => {
 const ForwardSon = forwardRef(Son);
 // 父组件
 export default class Father extends React.Component {
-  cur = null;
+  cur: any = null;
   handerClick() {
     const { onFocus, onChangeValue } = this.cur;
     onFocus(); // 让子组件的输入框获取焦点
@@ -66,7 +66,7 @@ class BtnShowRef extends React.Component {
   state = { num: 0 };
   node = null;
   // getDom方法在每次渲染时都是同一个函数实例，所以ref回调函数只会在组件挂载和卸载时被调用，不会因为状态更新而被调用。
-  getDom = (node) => {
+  getDom = (node: any) => {
     this.node = node;
     console.log("此时的参数是什么：", this.node);
   };
