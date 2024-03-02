@@ -5,17 +5,17 @@ import { sayHello } from "@mashy-monorepo/shared";
 
 import "@mashy-monorepo/web-component";
 
-import HelloworldComp from "./components/Helloworld";
-import Communication from "./components/Communication";
-import CommunicateByRef from "./components/CommunicateByRef";
-import CssModule from "./components/CSSModule";
-import ContextComp from "./components/Context";
-import RenderComp from "./components/Render";
-import RenderMoreData from "./components/RenderMoreData";
-import EventSystem from "./components/EventSystem";
+import HelloworldComp from "../components/Helloworld";
+import Communication from "../components/Communication";
+import CommunicateByRef from "../components/CommunicateByRef";
+import CssModule from "../components/CSSModule";
+import ContextComp from "../components/Context";
+import RenderComp from "../components/Render";
+import RenderMoreData from "../components/RenderMoreData";
+import EventSystem from "../components/EventSystem";
 
-import Store from "./store";
-import { CompA, CompB, ShowInfoComp } from "./components/ReactRedux";
+import Store from "../store";
+import { CompA, CompB, ShowInfoComp } from "../components/ReactRedux";
 import { Provider } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 

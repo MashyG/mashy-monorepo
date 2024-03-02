@@ -142,3 +142,129 @@ reducer：函数，根据 action 的描述生成一个新的 state
 > 两个插件
 > `Redux Toolkit` - 官方推荐编写 Redux 逻辑的方式，是一套工具的集合：简化 store 的配置方式；内置 immer 支持可变式状态修改；内置 thunk 更好的异步创建
 > `react-redux` - 用来连接 Redux 和 React 组件的中间件：Redux 从 react-redux 中获取组件状态；组件从 react-redux 中更新状态
+
+## React-Router
+
+### 下载
+
+```shell
+pnpm i react-router-dom
+```
+
+### 使用步骤
+
+1. 注册路由
+   ```jsx
+    import { createBrowserRouter } from "react-router-dom"
+    const router = createBrowserRouter([
+      {
+        path: '/',
+        element: <App />
+      }，
+      {
+        path: '/son',
+        children: [
+          {
+            path: '/son/one',
+            element: <div>son/one</div>
+          },
+          {
+            path: '/son/two',
+            element: <div>son/two</div>
+          }
+        ]
+      }
+    ])
+   ```
+2. 使用路由组件，并传入路由
+   ```jsx
+   import { RouterProvider } from "react-router-dom";
+   <RouterProvider router={router} />;
+   ```
+
+### 路由跳转
+
+1. 声明式
+
+```tsx
+import { Link } from "react-router-dom";
+
+<Link to="/">首页</Link>;
+```
+
+2. 命令式
+
+```tsx
+import { useNavigate } from "react-router-dom";
+
+const navigate = useNavigate();
+
+<button onClick={() => navigate("/")}>返回首页</button>;
+```
+
+### 路由传参方式: `useSearchParams`, `useParams`
+
+```tsx
+// 1. useSearchParams
+navigate("/params?id=mashy")
+
+const [searchParams] = useSearchParams();
+const searchParamsId = searchParams.get("id");
+
+// 2. useParams
+// 注意需要配置路由：
+{
+  path: "/params/:id/:name",
+  element: <Params />,
+}
+navigate("/params/09/mashy")
+
+const params = useParams();
+const paramsId = params.id;
+const paramsName = params.name;
+```
+
+### 嵌套路由
+
+1. 使用 `children` 属性配置路由嵌套关系
+2. 使用 `<Outlet />` 组件配置二级路由渲染位置
+
+```tsx
+{
+  path: "/layout",
+  element: <Layout />,
+  children: [
+    {
+      path: "left",
+      element: <Left />,
+    },
+    {
+      path: "right",
+      element: <Right />,
+    },
+  ],
+}
+
+<>
+  <div>Layout Page</div>
+  <Link to="/layout/left">左边</Link> | <Link to="/layout/right">右边</Link>
+  {/* 配置二级路由 */}
+  <Outlet />
+</>
+```
+
+### 404 路由配置
+
+```tsx
+{
+  path: "*",
+  element: <NotFound />,
+}
+```
+
+### 2 种路由模式
+
+| 路由模式 | 创建方式            | url 表现  | 底层原理                      | 是否需要后端支持 |
+| -------- | ------------------- | --------- | ----------------------------- | ---------------- |
+| history  | createBrowserRouter | url/aaa   | history 对象 + pushState 事件 | 需要             |
+| hash     | createHashRouter    | url/#/aaa | 监听 hasChange 事件           | 不需要           |
