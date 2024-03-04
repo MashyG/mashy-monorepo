@@ -21,7 +21,7 @@
 
 ### 缓存 React.element 对象
 
-1. 可以通过一个函数**缓存**部分不要更新的组件[**controllComponentRender**](../../../../apps/react-project/src/components/Render.jsx) ==> **不推荐该方法 -> 而是使用 useMemo 方法**
+1. 可以通过一个函数**缓存**部分不要更新的组件[**controllComponentRender**](../../../../apps/react-project/src/components/Render.tsx) ==> **不推荐该方法 -> 而是使用 useMemo 方法**
 
 ```ts
 /**

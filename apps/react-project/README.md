@@ -268,3 +268,150 @@ const paramsName = params.name;
 | -------- | ------------------- | --------- | ----------------------------- | ---------------- |
 | history  | createBrowserRouter | url/aaa   | history 对象 + pushState 事件 | 需要             |
 | hash     | createHashRouter    | url/#/aaa | 监听 hasChange 事件           | 不需要           |
+
+## Hook `useReducer`
+
+> 状态管理，类似 `useState`
+
+```jsx
+function numberReducer(state = 1, action: any) {
+  // 根据action的type来判断如何处理state
+  switch (action.type) {
+    case "ADD":
+      return state + 1;
+    case "DEL":
+      return state - 1;
+    case "SET":
+      // 传递参数 payload
+      return state + action.payload ?? 0;
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(numberReducer, 1);
+  return (
+    <>
+      <button onClick={() => dispatch({ type: "ADD" })}>-</button>
+      {state}
+      <button onClick={() => dispatch({ type: "ADD" })}>+</button>
+      <button onClick={() => dispatch({ type: "SET", payload: 100 })}>
+        +100
+      </button>
+    </>
+  );
+}
+```
+
+## Hook `React.useMemo`， 和 高阶组件 `React.memo`
+
+### Hook `React.useMemo`
+
+> 描述：`useMemo` 接受两个参数，一个是创建函数，一个是依赖数组。当依赖数组中的值没有变化时，useMemo 将返回上一次的计算结果，而不是重新计算。
+> 使用场景：计算量比较大的情况下；引用类型的变量
+
+### 高阶组件 `React.memo`
+
+> 描述： 如果该组件的 props 没有变化，那么就会跳过渲染，直接复用上一次的渲染结果。
+> 使用场景：只适用于函数组件
+
+### 总结
+
+- React.memo 是用于优化 React 组件的渲染性能，避免不必要的渲染。
+- React.useMemo 是用于优化复杂计算的性能，避免不必要的计算。
+
+### 注意
+
+**React.memo props 比较机制**
+
+1. 传递非引用类型型的 props：props 变化时子组件重新渲染
+2. 传递引用类型的 props：比较的是新旧值的引用地址，当父组件函数重新渲染时，实际上会导致该 props 的引用地址发生改变，因此子组件也会重新渲染
+3. 要想保证使用引用类型的子组件稳定，需要使用 `useMemo`
+
+## Hook `React.useCallback`
+
+> 在组件多次重新渲染时缓存函数
+
+```jsx
+const MyInput = memo(({ onChange }: any) => {
+  console.log("子组件重新渲染");
+  return <input onChange={onChange} />;
+});
+
+function App() {
+  const [count, setCount] = useState(1);
+  // 该函数传递给子组件时是引用类型，当 App 组件更新时会重新渲染调用 handleChange 方法，引用发生了改变，因此子组件也会发生变化，从而重新渲染
+  const handleChange = (value: any) => {
+    console.log(value);
+  };
+  // 当使用 useCallback 包裹后，父组件的改变不会促使子组件重新渲染
+  // const handleChange = useCallback((value: any) => {
+  //   console.log(value);
+  // }, []);
+  return (
+    <>
+      <MyInput onChange={handleChange} />
+      {count}
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </>
+  );
+}
+``;
+```
+
+## 高阶组件 `React.forwardRef`
+
+> 父组件获取子组件的 DOM 节点
+
+```jsx
+import { forwardRef, useRef } from "react";
+const Son = forwardRef((props, ref: any) => {
+  return <div ref={ref}>I am son</div>;
+});
+function App() {
+  const sonRef = useRef(null);
+  const getSonRef = () => {
+    console.log(sonRef);
+  };
+  return (
+    <>
+      <Son ref={sonRef} />
+      <button onClick={getSonRef}>getSonRef</button>
+    </>
+  );
+}
+```
+
+## Hook `React.useImperativeHandle`
+
+> 获取子组件的方法
+
+```jsx
+const Son = forwardRef((_, ref: any) => {
+  const inputRef: any = useRef(null);
+  const focusHandler = () => {
+    inputRef.current.focus();
+  };
+
+  // 把方法暴露给父组件
+  useImperativeHandle(ref, () => ({
+    focus: focusHandler,
+  }));
+
+  return <input ref={inputRef} />;
+});
+function App() {
+  const sonRef: any = useRef(null);
+  const focusSonRef = () => {
+    console.log(sonRef);
+    sonRef.current.focus();
+  };
+  return (
+    <>
+      <Son ref={sonRef} />
+      <button onClick={focusSonRef}>getSonRef</button>
+    </>
+  );
+}
+```

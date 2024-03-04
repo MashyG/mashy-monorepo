@@ -3,6 +3,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 /* number Reducer */
 function numberReducer(state = 1, action: any) {
   console.log("numberReducer", state, action);
+  // 根据action的type来判断如何处理state
   switch (action.type) {
     case "ADD":
       return state + 1;
