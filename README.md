@@ -1,12 +1,11 @@
 # Mashy monorepo
 
 [docs](./packages/docs)
-...more pkg
 
-apps/vue-project
+...[more pkg](./packages)
 
-apps/react-project
+(apps/vue-project)[./apps/vue-projec]
 
-## TODO List
+(apps/react-project)[./apps/react-projec]
 
-- web-component 中的静态资源如果处理？使得在不同环境下能正常展示
+(apps/electron-vite-vue3)[./apps/electron-vite-vue]
