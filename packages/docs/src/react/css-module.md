@@ -13,7 +13,7 @@
 
 ## CSS Module
 
-[示例](../../../../apps/react-project/src/components/CSSModule.jsx)
+[示例](../../../../apps/react-project/src/components/CSSModule.tsx)
 
 在 vite 中，通过 CSS 文件名命名（[name].module.css）导入到 ts 文件中使用
 

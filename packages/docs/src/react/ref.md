@@ -72,7 +72,7 @@ class GrandFather extends React.Component {
 
 1. 类组件 ref： 通过 useRef 创建 ref 对象，并通过该对象调用子组件的 current 中暴露出来的方法
 
-2. 函数组件 forwardRef + useImperativeHandle -> [CommunicateByRef](../../../../apps/react-project/src/components/CommunicateByRef.jsx)
+2. 函数组件 forwardRef + useImperativeHandle -> [CommunicateByRef](../../../../apps/react-project/src/components/CommunicateByRef.tsx)
    > useImperativeHandle 接受三个参数：
    >
    > 第一个参数 ref : 接受 forWardRef 传递过来的 ref 。

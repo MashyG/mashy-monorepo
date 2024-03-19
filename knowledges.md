@@ -29,7 +29,7 @@
 25. JS 常见设计模式分类与应用
 26. Typescript 原理及编译机制，装饰器
 27. 元数据与 reflect-metadata 库 ？
-28. Scanner 稻苗器、Parser 解析器、Binder 绑定器、Checker 检查器、Emitter 发射器
+28. Scanner 扫描器、Parser 解析器、Binder 绑定器、Checker 检查器、Emitter 发射器
 
 ### ES
 

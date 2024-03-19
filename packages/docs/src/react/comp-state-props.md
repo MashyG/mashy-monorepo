@@ -162,4 +162,4 @@ function MyComponent({ myProp }) {
 
 ## Context
 
-[示例](../../../../apps/react-project/src/components/Context.jsx)
+[示例](../../../../apps/react-project/src/components/Context.tsx)
