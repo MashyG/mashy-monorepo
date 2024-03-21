@@ -18,6 +18,7 @@ import Store from "../store";
 import { CompA, CompB, ShowInfoComp } from "../components/ReactRedux";
 import { Provider } from "react-redux";
 import { useEffect, useRef, useState } from "react";
+import { myBroadcastChannel } from "../plugins/broadcastChannel";
 
 const getStyles = (val: boolean) => {
   return { display: val ? "block" : "none" };
@@ -126,9 +127,21 @@ function FormItem() {
   );
 }
 
+const handleSendMsg = () => {
+  console.log("app -sendMsg");
+  myBroadcastChannel.send("app -sendMsg");
+};
+myBroadcastChannel.onmessage((event: any) => {
+  console.log("app page receive message", event);
+});
+
 function App() {
   return (
     <>
+      <button onClick={() => handleSendMsg()}>sendMsg</button>
+      <div style={{ color: "yellowgreen" }}>
+        ******************************************
+      </div>{" "}
       {<ReactDom />}
       <div style={{ color: "yellowgreen" }}>
         ******************************************
