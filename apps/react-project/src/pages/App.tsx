@@ -19,6 +19,8 @@ import { CompA, CompB, ShowInfoComp } from "../components/ReactRedux";
 import { Provider } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { myBroadcastChannel } from "../plugins/broadcastChannel";
+import { useMessage } from "../UI/Message/useMessage";
+import { ConfigProvider } from "../UI/Message/ConfigProvider";
 
 const getStyles = (val: boolean) => {
   return { display: val ? "block" : "none" };
@@ -91,7 +93,7 @@ function FormItem() {
     console.log(inputRef?.current);
   };
 
-  const [showCountDom, setShow] = useState(true);
+  const [showCountDom, setShow] = useState(false);
   function CountDom() {
     const [count, setCount] = useState(0);
     // Similar to componentDidMount and componentDidUpdate: 1st render and every update
@@ -135,9 +137,31 @@ myBroadcastChannel.onmessage((event: any) => {
   console.log("app page receive message", event);
 });
 
+const ShowButtonMessage = () => {
+  const message = useMessage();
+
+  return (
+    <button
+      onClick={() => {
+        message.add({
+          content: "请求成功",
+        });
+      }}
+    >
+      成功
+    </button>
+  );
+};
+
 function App() {
   return (
     <>
+      <ConfigProvider>
+        <ShowButtonMessage />
+      </ConfigProvider>
+      <div style={{ color: "yellowgreen" }}>
+        ******************************************
+      </div>{" "}
       <button onClick={() => handleSendMsg()}>sendMsg</button>
       <div style={{ color: "yellowgreen" }}>
         ******************************************
