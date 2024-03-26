@@ -339,3 +339,9 @@ Vue 的 nextTick 函数的实现主要涉及到 JavaScript 的**事件循环**�
 - 在 Vue 2 中，作用域插槽的语法是 `<slot name="xxx" :data="data"></slot>` 和 `<template slot="xxx" slot-scope="props"></template>`。
 
 - 在 Vue 3 中，作用域插槽的语法变为 `<slot name="xxx" :data="data"></slot>` 和 `<template v-slot:xxx="props"></template>`。
+
+# v-for 和 v-if 优先级
+
+## vue2：v-for 比 v-if 优先级高
+
+## vue3：v-if 比 v-for 优先级高

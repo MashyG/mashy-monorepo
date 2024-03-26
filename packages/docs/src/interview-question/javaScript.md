@@ -324,3 +324,39 @@ let allPositive = arr.myEvery((item, index) => {
 });
 console.log(allPositive);
 ```
+
+# js 如何判断是否是数组？
+
+```js
+const isArray = (value) => {
+  return Object.prototype.toString.call(value) === "[object Array]"; // √
+  // 或者
+  return Array.isArray(value); // √
+  // 或者
+  return value instanceof Array; // prototype属性是可以修改的，所以并不是最初判断为true就一定永远为真
+  // 或者
+  return value && typeof value === "object" && value.constructor === Array;
+};
+```
+
+# js 如何处理精度丢失问题？
+
+> 主要原因是计算机内部使用二进制浮点数表示法，而不是十进制。这种二进制表示法在某些情况下无法准确地表示某些十进制小数，从而导致精度丢失
+
+1. 使用**整数**或**字符串**进行计算，而不是浮点数进行计算
+2. 使用专门的库或工具：`Decimal.js、Big.js 或 BigNumber.js `
+3. 避免直接比较浮点数
+4. 限制小数位数
+
+# n = 1, m = 100, js 使用递归实现 n + (n + 1) + ... + m = ?
+
+```js
+// 递归实现
+// 递归的终止条件：当 n 大于 m 时，递归结束，返回 0。
+function sum(n, m) {
+  if (n > m) {
+    return 0;
+  }
+  return n + sum(n + 1, m);
+}
+```

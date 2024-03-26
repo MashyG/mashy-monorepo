@@ -111,4 +111,3 @@ class MyPromise {
     return new MyPromise((resolve, reject) => reject(reason));
   }
 }
-// 解析以上类Promise的底层实现思想
