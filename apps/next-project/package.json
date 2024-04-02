@@ -1,5 +1,5 @@
 {
-  "name": "next-project",
+  "name": "@mashy-monorepo/next-project",
   "version": "0.1.0",
   "private": true,
   "scripts": {
