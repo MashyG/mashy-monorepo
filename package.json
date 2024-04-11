@@ -7,7 +7,8 @@
     "test": "vitest",
     "dev:vue": "pnpm -F @mashy-monorepo/vue-project dev",
     "dev:react": "pnpm -F @mashy-monorepo/react-project dev",
-    "dev:electron": "pnpm -F @mashy-monorepo/electron-vite-vue3 dev"
+    "dev:electron": "pnpm -F @mashy-monorepo/electron-vite-vue3 dev",
+    "dev:next": "pnpm -F @mashy-monorepo/next-project dev"
   },
   "keywords": [],
   "author": "",
