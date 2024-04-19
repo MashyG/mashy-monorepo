@@ -97,7 +97,7 @@ export default function Content() {
         </div>
         {selectContexts.map((text, index) => {
           return (
-            <div className="bg-gray-100 flex items-center border-b border-gray-200 border-solid">
+            <div className="bg-gray-100 flex items-start justify-between border-b border-gray-200 border-solid">
               <SelectContent key={index} text={text} />
               <span
                 className="px-2 py-1 bg-red-400 hover:bg-red-500 text-white rounded-full cursor-pointer"
