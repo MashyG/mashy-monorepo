@@ -102,3 +102,8 @@ export default {
 };
 </script>
 ```
+
+# `effect` 和 `watchEffect` 有何区别？
+
+1. **依赖追踪**： `watchEffect` 在函数内部自动追踪响应式数据的变化；而 `effect` 需要手动指定依赖项。
+2. **触发时机**： `watchEffect` 在创建时立即执行；而 `effect` 在创建时不会立即执行，会在创建后的下一个事件循环周期或手动调用 `trigger` 时执行。
