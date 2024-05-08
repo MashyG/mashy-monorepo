@@ -5,7 +5,7 @@ import NotePreview from "@/components/NotePreview";
 import SaveButton from "@/components/SaveButton";
 import DeleteButton from "@/components/DeleteButton";
 import { useFormState } from "react-dom";
-import { deleteNote, saveNote } from "@/app/action";
+import { deleteNote, saveNote } from "@/actions";
 
 type NoteEditorProps = {
   noteId: string;

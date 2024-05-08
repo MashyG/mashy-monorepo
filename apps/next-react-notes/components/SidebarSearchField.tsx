@@ -1,9 +1,12 @@
 "use client";
 
+import { useTranslation } from "@/app/i18n/client";
+import { type Locales } from "@/config";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 
-export default function SidebarSearchField() {
+export default function SidebarSearchField({ lng }: { lng: Locales }) {
+  const { t } = useTranslation(lng);
   const searchParams = useSearchParams();
   const searchText = searchParams.get("q") ?? "";
 
@@ -26,13 +29,13 @@ export default function SidebarSearchField() {
   }
 
   return (
-    <div className="search" role="search">
+    <div className="search flex-1" role="search">
       <label className="offscreen" htmlFor="sidebar-search-input">
         Search for a note by title
       </label>
       <input
         id="sidebar-search-input"
-        placeholder="Search"
+        placeholder={t("search")}
         type="text"
         value={searchText}
         onChange={(e) => handleSearch(e.target.value)}

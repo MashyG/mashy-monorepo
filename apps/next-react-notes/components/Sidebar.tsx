@@ -4,23 +4,28 @@ import SidebarNoteList from "@/components/SidebarNoteList";
 import EditButton from "./EditButton";
 import NoteListSkeleton from "./NoteListSkeleton";
 import SidebarSearchField from "./SidebarSearchField";
+import { type Locales } from "@/config";
+import { useTranslation } from "@/app/i18n";
+import { Footer } from "./Footer";
+import SidebarImport from "./SidebarImport";
 
-export default async function Sidebar() {
+export default async function Sidebar({ lng }: { lng: Locales }) {
+  const { t } = await useTranslation(lng);
   return (
     <>
       <section className="bg-white shadow-lg z-[1000] w-1/3 max-w-80 min-w-64 p-2 flex flex-col">
         <Link href={"/"}>
           <section className="flex p-4 items-center tracking-widest uppercase">
             <img className="w-6 h-6 mr-2" src="/logo.svg" role="presentation" />
-            <strong>React Notes</strong>
+            <strong>{t("title")}</strong>
           </section>
         </Link>
-        <section
-          className="px-2 flex items-center justify-between"
-          role="menubar"
-        >
-          <SidebarSearchField />
-          <EditButton noteId={null}>New</EditButton>
+        <section className="px-2" role="menubar">
+          <SidebarSearchField lng={lng} />
+          <div className="flex items-center pt-2">
+            <EditButton noteId={null}>{t("new")}</EditButton>
+            <SidebarImport lng={lng} />
+          </div>
         </section>
 
         <nav className="overflow-auto">
@@ -28,6 +33,7 @@ export default async function Sidebar() {
             <SidebarNoteList />
           </Suspense>
         </nav>
+        <Footer lng={lng} />
       </section>
     </>
   );
