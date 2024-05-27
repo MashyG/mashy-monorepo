@@ -4,7 +4,7 @@ import { stat, mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 import mime from "mime";
 import dayjs from "dayjs";
-import { addNote } from "@/lib/redis";
+import { addNote } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function importNote(formData: FormData) {

@@ -1,5 +1,5 @@
 import Note from "@/components/Note";
-import { getNote } from "@/lib/redis";
+import { getNote } from "@/lib/prisma";
 
 type NotePageProps = { params: { id: string } };
 

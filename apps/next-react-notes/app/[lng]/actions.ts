@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { addNote, updateNote, delNote } from "@/lib/redis";
+import { addNote, updateNote, delNote } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { sleep } from "@/lib";
 import { z } from "zod";

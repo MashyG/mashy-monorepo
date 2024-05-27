@@ -3,3 +3,4 @@ dist
 .rollup.cache
 STUDY.md
 .vscode
+.env

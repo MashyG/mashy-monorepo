@@ -44,6 +44,8 @@ export function middleware(request: NextRequest) {
   return Response.redirect(request.nextUrl);
 }
 
+// export { auth as middleware } from "auth";
+
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
