@@ -19,12 +19,19 @@ export default async function Sidebar({ lng }: { lng: Locales }) {
 
         <Link href={"/"}>
           <section className="flex py-2 items-center tracking-widest uppercase">
-            <img className="w-6 h-6 mr-2" src="/logo.svg" role="presentation" />
+            <img
+              className="w-6 h-6 mr-2"
+              alt="logo"
+              src="/logo.svg"
+              role="presentation"
+            />
             <strong>{t("title")}</strong>
           </section>
         </Link>
         <section role="menubar">
-          <SidebarSearchField lng={lng} />
+          <Suspense>
+            <SidebarSearchField lng={lng} />
+          </Suspense>
           <div className="flex items-center pt-2">
             <EditButton noteId={null}>{t("new")}</EditButton>
             <SidebarImport lng={lng} />

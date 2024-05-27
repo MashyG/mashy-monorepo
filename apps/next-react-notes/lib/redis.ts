@@ -37,7 +37,7 @@ export async function delNote(uuid: string) {
 }
 
 export async function addUser(username: string, password: string) {
-  await redis.hset("users", [username], password);
+  await redis.hset("users", username, password);
   return {
     name: username,
     username,

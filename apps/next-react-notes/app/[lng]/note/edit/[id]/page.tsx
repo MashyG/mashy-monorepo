@@ -24,8 +24,8 @@ export default async function EditPage({ params }: EditPageProps) {
   return (
     <NoteEditor
       noteId={noteId}
-      initialTitle={note.title}
-      initialBody={note.content}
+      initialTitle={note?.title ?? ""}
+      initialBody={note?.content ?? ""}
     />
   );
 }

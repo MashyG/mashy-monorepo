@@ -9,7 +9,9 @@
     "dev:react": "pnpm -F @mashy-monorepo/react-project dev",
     "dev:electron": "pnpm -F @mashy-monorepo/electron-vite-vue3 dev",
     "dev:next": "pnpm -F @mashy-monorepo/next-project dev",
-    "dev:extension": "pnpm -F @mashy-monorepo/chrome-extension dev"
+    "dev:extension": "pnpm -F @mashy-monorepo/chrome-extension dev",
+
+    "build:notes": "pnpm -F @mashy-monorepo/next-react-notes build"
   },
   "keywords": [],
   "author": "",
