@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NotePreview from "@/components/NotePreview";
 import SaveButton from "@/components/SaveButton";
 import DeleteButton from "@/components/DeleteButton";

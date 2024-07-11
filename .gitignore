@@ -4,3 +4,4 @@ dist
 STUDY.md
 .vscode
 .env
+.vercel

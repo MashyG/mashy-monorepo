@@ -11,7 +11,7 @@ const schema = z.object({
   content: z
     .string()
     .min(1, { message: "请输入内容" })
-    .max(100, { message: "内容不能超过100个字符" }),
+    .max(1000, { message: "内容不能超过1000个字符" }),
 });
 
 export async function saveNote(prevState: any, formData: FormData) {
