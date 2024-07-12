@@ -21,6 +21,7 @@
     "paths": {
       "@/*": ["./*"],
       "@/data/*": ["./data/*"],
+      "@/components/*": ["components/*"],
       "contentlayer/generated": ["./.contentlayer/generated"]
     }
   },

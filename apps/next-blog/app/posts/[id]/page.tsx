@@ -74,10 +74,13 @@ const Page = ({ params }: Props) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <article className="mx-auto max-w-xl py-8">
+      <article className="mx-auto max-w-xl py-8 prose dark:prose-invert">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold"> {post.title} </h1>
-          <time dateTime={post.date} className="mb-1 text-xs text-gray-600">
+          <h1 className="text-3xl font-bold dark:text-white"> {post.title} </h1>
+          <time
+            dateTime={post.date}
+            className="mb-1 text-xs text-gray-600 dark:text-white"
+          >
             {dayjs(post.date).format("YYYY-MM-DD")}
           </time>
         </div>

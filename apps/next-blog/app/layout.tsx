@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import siteMetadata from "@/data/siteMetadata";
+import { ThemeProviders } from "./theme-providers";
+import ThemeSwitch from "./component/ThemeSwith";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -50,9 +52,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // html 使用 suppressHydrationWarning 取消水合错误警告 ↓↓↓↓↓
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang={siteMetadata.locale} suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProviders>
+          <header className="flex justify-end">
+            <ThemeSwitch />
+          </header>
+          {children}
+        </ThemeProviders>
+      </body>
     </html>
   );
 }
