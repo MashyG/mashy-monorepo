@@ -1,9 +1,11 @@
 "use client";
 
 import { useStores } from "@/hook/useStore";
-import { toStr } from "@/utils";
+import { login } from "@/lib/api";
 import { Input, Form, Button, message } from "antd";
 import { observer } from "mobx-react";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export type LoginFormType = {
   username: string;
@@ -11,8 +13,8 @@ export type LoginFormType = {
 };
 
 const formLayout = {
-  labelCol: { span: 2 },
-  wrapperCol: { span: 22 },
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
   name: "loginForm",
 };
 const btnsLayout = {
@@ -22,61 +24,60 @@ const btnsLayout = {
 const LoginForm: React.FC = observer(() => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const [currToken, setCurrToken] = useState("");
+
+  useEffect(() => {
+    if (currToken) {
+      redirect("/home");
+    }
+  }, [currToken]);
 
   const { userStore } = useStores();
 
   const onFinish = (values: LoginFormType) => {
-    fetch("/api/login", {
-      method: "POST",
-      body: toStr(values),
-    })
+    login(values)
       .then(async (res) => {
         const { token } = await res.json();
         userStore.setToken(token ?? "");
-        messageApi.open({
-          type: "success",
-          content: "Success",
-        });
+        messageApi.success("LOGIN Success!");
+        setTimeout(() => {
+          setCurrToken(token);
+        }, 1000);
       })
       .catch((e) => {
-        messageApi.open({
-          type: "error",
-          content: "Error",
-        });
+        console.log(e);
+        messageApi.warning("LOGIN unSuccess!");
       });
   };
 
   return (
-    <>
-      <div className="text-2xl">LOGIN</div>
-      {contextHolder}
-      <Form
-        {...formLayout}
-        form={form}
-        name="control-hooks"
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="username"
-          label="username"
-          rules={[{ required: true }]}
-        >
-          <Input placeholder="please input username" />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="password"
-          rules={[{ required: true }]}
-        >
-          <Input.Password placeholder="please input password" />
-        </Form.Item>
-        <Form.Item {...btnsLayout}>
-          <Button type="primary" htmlType="submit">
-            LOGIN
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+    <div>
+      <div className="border border-white rounded-xl p-4 bg-white">
+        <div className="text-2xl text-center m-4">LOGIN</div>
+        {contextHolder}
+        <Form {...formLayout} form={form} onFinish={onFinish}>
+          <Form.Item
+            name="username"
+            label="username"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="please input username" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="password"
+            rules={[{ required: true }]}
+          >
+            <Input.Password placeholder="please input password" />
+          </Form.Item>
+          <Form.Item {...btnsLayout}>
+            <Button type="primary" htmlType="submit">
+              LOGIN
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    </div>
   );
 });
 

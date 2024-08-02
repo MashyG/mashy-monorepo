@@ -44,10 +44,14 @@ export async function getToken(data: { username: string; password: string }) {
       username,
       type,
       status,
-      exp: Date.now() + 1000 * 60 * 60 * 24 * 7,
+      exp: Date.now() + 1000 * 60 * 60 * 24 * 7, // 7天
     })
   );
   return NextResponse.json({
+    id,
+    username,
+    type,
+    status,
     token,
   });
 }

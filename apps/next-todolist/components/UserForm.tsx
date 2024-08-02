@@ -1,6 +1,7 @@
 "use client";
 
 import { useStores } from "@/hook/useStore";
+import { addUser } from "@/lib/api";
 import { toStr } from "@/utils";
 import { Input, Form, Select, Button, message } from "antd";
 import { observer } from "mobx-react";
@@ -38,10 +39,7 @@ const UserForm: React.FC = observer(() => {
 
   const onFinish = async (values: UserFormType) => {
     try {
-      await fetch("/api/user", {
-        method: "POST",
-        body: toStr(values),
-      });
+      await addUser(values);
       messageApi.success("ADD Success!");
     } catch (error) {
       messageApi.warning("ADD unSuccess!");
@@ -60,7 +58,6 @@ const UserForm: React.FC = observer(() => {
         {...formLayout}
         form={form}
         initialValues={{ type: "1" }}
-        name="control-hooks"
         onFinish={onFinish}
       >
         <Form.Item

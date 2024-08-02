@@ -1,14 +1,6 @@
 class UserStore {
   info = {};
   token = "";
-
-  constructor() {
-    const storageToken = sessionStorage.getItem("token");
-    if (storageToken) {
-      this.setToken(storageToken);
-    }
-  }
-
   getUserInfo() {
     return this.info;
   }

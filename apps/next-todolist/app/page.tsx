@@ -1,13 +1,12 @@
-import UserForm from "@/components/UserForm";
-import LoginForm from "@/components/LoginForm";
-import UserList from "@/components/UserList";
+"use client";
+
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <>
-      <LoginForm />
-      <UserForm />
-      <UserList />
-    </>
-  );
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    redirect("/login");
+  } else {
+    redirect("/home");
+  }
 }

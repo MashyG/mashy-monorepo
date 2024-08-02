@@ -1,12 +1,13 @@
 "use client";
 
+import { getUsers } from "@/lib/api";
 import { useState, useEffect, type FC } from "react";
 
 const UserList: FC = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("/api/user").then(async (res) => {
+    getUsers().then(async (res) => {
       if (res.ok) {
         const { list } = await res.json();
         setUsers(list ?? []);
