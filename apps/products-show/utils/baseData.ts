@@ -120,7 +120,7 @@ export interface ContactUsData {
   name: string;
   companyName: string;
   contactInfo: string;
-  message: string;
+  desc: string;
 }
 export const submitContactUsData = async (data: ContactUsData) => {
   console.log("submitContactUsData  ======>   ", data);
