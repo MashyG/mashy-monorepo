@@ -41,3 +41,12 @@ export interface Headers {
 export interface BaseData {
   headers: Headers;
 }
+
+export interface ProductItem {
+  id: string;
+  name: string;
+  beforePrice?: string;
+  price: string;
+  image: string;
+  desc: string;
+}

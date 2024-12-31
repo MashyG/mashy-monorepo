@@ -12,6 +12,7 @@ import {
 export default function RightMenus(props: { menus: MenuItem[] }) {
   const { menus } = props;
   return (
+    <div className="hidden sm:block">
     <NavigationMenu>
       <NavigationMenuList>
         {menus.map((menu) => (
@@ -25,5 +26,7 @@ export default function RightMenus(props: { menus: MenuItem[] }) {
         ))}
       </NavigationMenuList>
     </NavigationMenu>
+
+    </div>
   );
 }
