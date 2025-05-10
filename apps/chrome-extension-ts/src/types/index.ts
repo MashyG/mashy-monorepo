@@ -1,5 +1,7 @@
+export type MessageType = "FROM_POPUP" | "FROM_CONTENT" | "FROM_BACKGROUND";
+
 export interface MessagePayload {
-  type: 'FROM_POPUP' | 'FROM_CONTENT' | 'FROM_BACKGROUND';
+  type: MessageType;
   message: string;
 }
 
@@ -8,4 +10,4 @@ export interface MessageResponse {
   success?: boolean;
 }
 
-export type ResponseType = 'success' | 'warning' | 'error' | 'info';
+export type ResponseType = "success" | "warning" | "error" | "info";

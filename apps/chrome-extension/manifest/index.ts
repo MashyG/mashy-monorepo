@@ -14,7 +14,7 @@ export const getManifestConfig = (): ManifestV3Export => {
       {
         js: ["src/content/index.tsx"],
         run_at: "document_end",
-        matches: ["https://juejin.cn/*"],
+        matches: ["<all_urls>"],
       },
     ],
     background: {
