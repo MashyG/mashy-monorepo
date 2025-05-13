@@ -5,7 +5,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 const rootEl = ref<any>(null)
 const defaultOffset = 16
 const isMouse = ref(false)
-const position = ref({ top: '60px', left: '90%' })
+const position = ref({ top: '60px', left: '', right: '20px' })
 const offset = ref({
   startX: 0,
   diffX: 0,
@@ -23,6 +23,10 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('mousemove', handleDrag)
   window.removeEventListener('mouseup', handleDragEnd)
+  window.removeEventListener('resize', () => {
+    position.value.top = '60px'
+    position.value.right = '20px'
+  })
 })
 
 const initOffset = (event: MouseEvent) => {
@@ -48,7 +52,7 @@ const handleDrag = (event: MouseEvent) => {
   if (!isMouse.value) {
     return
   }
-
+  position.value.right = ''
   const { pageY, pageX } = event
   const { diffX, diffY, width, height } = offset.value
 
@@ -81,7 +85,7 @@ const handleDragEnd = async (event: MouseEvent) => {
 <template>
   <div
     ref="rootEl"
-    class="fixed z-[999] cursor-grab select-none"
+    class="fixed z-[999] select-none"
     :style="position"
     @mousedown="handleDragStart"
   >

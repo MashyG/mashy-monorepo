@@ -1,39 +1,86 @@
-<script setup>
+<script setup lang="ts">
+import PopularProductShow from './PopularProductShow.vue'
 import { sendMsg2Bg } from '@/share/messages'
-import { ElButton } from 'element-plus'
-import { ref } from 'vue'
+import { ElButton, ElSelect, ElOption, ElDrawer, ElPagination } from 'element-plus'
+import { ref, computed } from 'vue'
+import { SORT_BY } from '@/share/constant'
+import BatchAddProductsDrawer from './BatchAddProductsDrawer.vue'
 
-const productOpportunitys = ref([])
+const productOpportunitys = ref<Array<any>>([])
 const isLoading = ref(false)
+const sortBy = ref(1)
+const showDrawer = ref(false)
+const drawerParams = ref({})
+const pageNumber = ref(1)
+const total = ref(0)
 
-const handleClick = async () => {
-  isLoading.value = true
-  const { data } = await sendMsg2Bg('/get_product_opportunity', {
+const params = computed(() => {
+  return {
     incentiveTaskId: null,
     incentive_tag_query: {},
     opportunity_type: 3,
-    page_number: 1,
+    page_number: pageNumber.value,
     page_size: 100,
-    sort_field: 1, // 排序
+    sort_field: sortBy.value, // 排序
     traffic_source: 'seller_organic',
     use_like: false
-  })
-  productOpportunitys.value = data?.list ?? []
+  }
+})
+
+const handleSearch = async () => {
+  isLoading.value = true
+  const { data } = await sendMsg2Bg('/get_product_opportunity', params.value)
+  productOpportunitys.value = formatList(data?.data ?? [])
+  total.value = data?.total_product_count ?? 0
   isLoading.value = false
+}
+const formatList = (list: Array<any>) => {
+  return list.map((item: any) => {
+    return {
+      ...item,
+      name: item.lead_name,
+      id: item.lead_id,
+      imgUrl: item.pic_url?.[0] ?? ''
+    }
+  })
+}
+
+const handleCurrentChange = (currentPage: number) => {
+  pageNumber.value = currentPage
+  handleSearch()
+}
+
+const handleShowDrawer = (lead_id: string, lead_name: string) => {
+  drawerParams.value = { lead_id, lead_name }
+  showDrawer.value = true
 }
 </script>
 
 <template>
-  <div class="p-20">
-    <ElButton type="primary" @click="handleClick" :loading="isLoading">商品机会</ElButton>
-  </div>
-  <div class="flex flex-wrap p-2">
-    <div v-for="item of productOpportunitys" :key="item.id" class="p-2 w-1/2">
-      <img :src="item.pic_url[0]" class="rounded" />
-      <div class="text-xs text-gray-400 py-1">{{ item.lead_id }}</div>
-      <div class="text-blue-600 overflow-hidden text-nowrap text-ellipsis">
-        {{ item.lead_name }}
+  <div class="p-6 rounded shadow-lg">
+    <div class="flex items-center justify-center">
+      <div class="flex items-center mr-6">
+        <label>排序：</label>
+        <ElSelect v-model="sortBy" placeholder="Select" class="flex-1 w-[200px]">
+          <ElOption v-for="item in SORT_BY" :key="item.id" :label="item.name" :value="item.id" />
+        </ElSelect>
       </div>
+      <ElButton type="primary" @click="handleSearch" :loading="isLoading">Search</ElButton>
+    </div>
+    <div class="flex flex-wrap p-2" v-if="productOpportunitys.length">
+      <ElPagination
+        layout="prev, pager, next"
+        :pageSize="100"
+        :total="total"
+        @change="handleCurrentChange"
+      />
+      <div v-for="item of productOpportunitys" :key="item.id" class="p-2 w-1/2 text-center">
+        <PopularProductShow :item="item" @changeDrawer="handleShowDrawer" />
+      </div>
+      <ElPagination layout="prev, pager, next" :total="total" @change="handleCurrentChange" />
+      <ElDrawer append-to-body v-model="showDrawer" title="批量添加产品">
+        <BatchAddProductsDrawer :params="drawerParams" />
+      </ElDrawer>
     </div>
   </div>
 </template>

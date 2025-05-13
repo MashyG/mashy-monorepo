@@ -1,5 +1,5 @@
 export const getManifestConfig = () => {
-  const matches: Array<string> = ['*://*.tiktokglobalshop.com/product/*']
+  const matches: Array<string> = ['*://*.tiktokglobalshop.com/product/*', '*://*.baidu.com/*']
   return {
     manifest_version: 3,
     name: 'My Vite Extension',

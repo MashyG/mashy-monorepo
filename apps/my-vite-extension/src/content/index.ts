@@ -8,7 +8,7 @@ function injectContent() {
   const root = document.createElement('div')
   root.id = 'mashy-root'
   document.body.appendChild(root)
-
+  console.log('Content注入DOM')
   // Vue 渲染DOM
   const app = createApp(App)
   app.mount(root)
