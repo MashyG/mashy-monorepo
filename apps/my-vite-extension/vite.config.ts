@@ -6,19 +6,22 @@ import Components from 'unplugin-vue-components/vite'
 import tailwindcss from '@tailwindcss/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { resolve } from 'path'
-import { getManifestConfig } from './manifest'
+import makeManifest, { getManifestConfig } from './manifest'
+
+const outDir = resolve(__dirname, 'dist')
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    tailwindcss(),
     AutoImport({
       resolvers: [ElementPlusResolver()]
     }),
     Components({
       resolvers: [ElementPlusResolver()]
     }),
+    tailwindcss(),
+    makeManifest(),
     crx({
       manifest: getManifestConfig()
     })
@@ -31,5 +34,12 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       '@root': resolve(__dirname, '.')
     }
+  },
+  build: {
+    /** Can slowDown build speed. */
+    sourcemap: true,
+    outDir,
+    minify: true,
+    reportCompressedSize: true
   }
 })

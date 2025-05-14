@@ -1,3 +1,39 @@
+import fs from 'fs'
+import { resolve } from 'path'
+import type { PluginOption } from 'vite'
+
+const outDir = resolve(__dirname, '../dist')
+
+export default function makeManifest(): PluginOption {
+  return {
+    name: 'make-manifest',
+    async buildStart() {
+      try {
+        console.log('Starting manifest generation...')
+        
+        if (!fs.existsSync(outDir)) {
+          console.log('Creating dist directory...')
+          fs.mkdirSync(outDir, { recursive: true })
+        }
+        
+        const manifestPath = resolve(outDir, 'manifest.json')
+        const manifest = getManifestConfig()
+        
+        console.log('Writing manifest file...')
+        await fs.promises.writeFile(
+          manifestPath,
+          JSON.stringify(manifest, null, 2),
+          'utf-8'
+        )
+        
+        console.log(`Manifest file generated successfully at: ${manifestPath}`)
+      } catch (error) {
+        console.error('Error generating manifest:', error)
+        throw error
+      }
+    }
+  }
+}
 export const getManifestConfig = () => {
   const matches: Array<string> = ['*://*.tiktokglobalshop.com/product/*', '*://*.baidu.com/*']
   return {
@@ -52,5 +88,3 @@ export const getManifestConfig = () => {
     ]
   }
 }
-
-export default {}

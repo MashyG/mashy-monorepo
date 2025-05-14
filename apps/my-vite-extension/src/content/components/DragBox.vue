@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { sleep } from '@/share'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, nextTick } from 'vue'
 
 const rootEl = ref<any>(null)
 const defaultOffset = 16
@@ -18,18 +18,24 @@ const offset = ref({
 onMounted(() => {
   window.addEventListener('mousemove', handleDrag)
   window.addEventListener('mouseup', handleDragEnd)
+  window.removeEventListener('resize', initPosition)
 })
 
 onUnmounted(() => {
   window.removeEventListener('mousemove', handleDrag)
   window.removeEventListener('mouseup', handleDragEnd)
-  window.removeEventListener('resize', () => {
-    position.value.top = '60px'
-    position.value.right = '20px'
-  })
+  window.removeEventListener('resize', initPosition)
 })
 
-const initOffset = (event: MouseEvent) => {
+const initPosition = () => {
+  nextTick(() => {
+    initOffset()
+  })
+  position.value.top = '60px'
+  position.value.right = '20px'
+}
+
+const initOffset = (event?: MouseEvent) => {
   const { width, height, left, top } = rootEl.value?.getBoundingClientRect()
   const { pageX = 0, pageY = 0 } = event || {}
 
