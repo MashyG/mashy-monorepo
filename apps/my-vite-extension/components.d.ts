@@ -6,6 +6,9 @@
 export {}
 
 declare module 'vue' {
+  export interface GlobalComponents {
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
+  }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }

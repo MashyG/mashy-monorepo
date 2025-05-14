@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { sendMsg2Bg } from '@/share/messages'
-import { ref, watch } from 'vue'
+import { computed, onBeforeMount, ref, watch } from 'vue'
 import { ElButton, ElInput, ElMessage, ElPagination } from 'element-plus'
 import PopularProductShow from './PopularProductShow.vue'
+import { arrayToTree } from '@/share'
 
 const keyword = ref('')
 const isSearching = ref(false)
 const size = ref(20)
 const isBatchAdd = ref(false)
+const category = ref('909064')
+const categoryList = ref<Array<any>>([])
 const popularProductList = ref<Array<any>>([])
 const dataLoading = ref(false)
 const pageNumber = ref(1)
@@ -23,6 +26,10 @@ const props = defineProps({
   }
 })
 
+const categoryIds = computed(() => {
+  return ['601739', category.value] // 手机与数码 + ...
+})
+
 const fetchProductList = async () => {
   if (!props.params.lead_id) {
     ElMessage({
@@ -34,7 +41,7 @@ const fetchProductList = async () => {
   const params = {
     lead_id: props.params.lead_id,
     search_text: keyword.value,
-    cate_ids: ['601739', '909064'],
+    cate_ids: categoryIds.value,
     opportunity_type: 3,
     page_number: pageNumber.value,
     page_size: 20
@@ -54,6 +61,28 @@ const formatList = (list: Array<any>) => {
     }
   })
 }
+
+const formatCategoryList = (list: Array<any>) => {
+  const newList = list
+    .filter(item => item.id === '601739' || item.parent_id === '601739')
+    .map(i => {
+      return {
+        ...i,
+        value: i.id,
+        label: i.name
+      }
+    })
+  return arrayToTree(newList)
+}
+const fetchCatagoryList = async () => {
+  const { data } = await sendMsg2Bg('/get_category_list')
+  const categories = formatCategoryList(data?.categories ?? [])
+  categoryList.value = categories
+}
+
+onBeforeMount(() => {
+  fetchCatagoryList()
+})
 
 watch(
   () => props.params,
@@ -127,8 +156,22 @@ const handleCurrentChange = (currentPage: number) => {
 <template>
   <div>
     <div class="flex items-center">
-      <label for="keyword">商品名称：</label
-      ><ElInput id="keyword" class="flex-1" v-model="keyword" placeholder="请输入商品名称" />
+      <div class="flex-1">
+        <div class="flex items-center">
+          <label for="keyword">商品名称：</label
+          ><ElInput id="keyword" class="flex-1" v-model="keyword" placeholder="请输入商品名称" />
+        </div>
+        <div class="flex items-center">
+          <label for="keyword">商品分类：</label
+          ><el-tree-select
+            id="category"
+            class="flex-1"
+            v-model="category"
+            :data="categoryList"
+            :render-after-expand="false"
+          />
+        </div>
+      </div>
       <ElButton type="primary" :loading="isSearching" @click="handleSearchProduct">搜索</ElButton>
     </div>
     <div class="flex items-center my-4">

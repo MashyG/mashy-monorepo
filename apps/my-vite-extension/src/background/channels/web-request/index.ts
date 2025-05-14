@@ -1,5 +1,6 @@
-import { SetProductOpportunityParams } from '@/background/store/productOpportunity'
+import { getCategoryListParams } from './categoryList'
 import { getPopularProductsParams } from './popularProducts'
+import { SetChannelParamsByWebTab } from '@/background/store/channel-params'
 
 export type ChannelFunc = (
   detail: chrome.webRequest.WebRequestHeadersDetails,
@@ -9,12 +10,13 @@ export type ChannelFunc = (
 const ChannelUrlMap: Record<string, ChannelFunc> = {
   // 获取热门商品请求参数
   'https://api16-normal-sg.tiktokglobalshop.com/api/v1/product/oc/seller_product_opportunity/seller/lead/list':
-    getPopularProductsParams
+    getPopularProductsParams,
+  'https://api16-normal-sg.tiktokglobalshop.com/api/v1/product/product_creation/preload_all_categories':
+    getCategoryListParams
 }
 
 export const getChannelWebRequest = (detail: chrome.webRequest.WebRequestHeadersDetails) => {
   const { tabId, url } = detail
-
   if (tabId === -1) {
     return
   }
@@ -28,7 +30,7 @@ export const getChannelWebRequest = (detail: chrome.webRequest.WebRequestHeaders
   }
 
   const func = ChannelUrlMap[key]
-  func?.(detail, payload => {
-    SetProductOpportunityParams({ tabId, apiUrl: url, payload })
+  func?.(detail, ({ channel, ...data }) => {
+    SetChannelParamsByWebTab({ tabId, channel, apiUrl: url, data })
   })
 }

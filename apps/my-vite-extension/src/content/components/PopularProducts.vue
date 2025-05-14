@@ -54,6 +54,11 @@ const handleShowDrawer = (lead_id: string, lead_name: string) => {
   drawerParams.value = { lead_id, lead_name }
   showDrawer.value = true
 }
+const handleClear = () => {
+  pageNumber.value = 1
+  sortBy.value = 1
+  productOpportunitys.value = []
+}
 </script>
 
 <template>
@@ -65,7 +70,8 @@ const handleShowDrawer = (lead_id: string, lead_name: string) => {
           <ElOption v-for="item in SORT_BY" :key="item.id" :label="item.name" :value="item.id" />
         </ElSelect>
       </div>
-      <ElButton type="primary" @click="handleSearch" :loading="isLoading">Search</ElButton>
+      <ElButton type="primary" @click="handleSearch" :loading="isLoading">搜索</ElButton>
+      <ElButton @click="handleClear">清空</ElButton>
     </div>
     <div class="flex flex-wrap p-2" v-if="productOpportunitys.length">
       <ElPagination

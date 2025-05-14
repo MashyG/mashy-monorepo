@@ -4,6 +4,7 @@ import {
   addProductOpportunity,
   getTTSPrudocts
 } from './handler/productOpportunity'
+import { getCategoryList } from './handler/categoryList'
 
 export const messageRouter: RouterConfig = {
   '/get_product_opportunity': {
@@ -35,8 +36,8 @@ export const messageRouter: RouterConfig = {
         return {
           status: 200,
           data: {
-            message: 'Get product successfully',
-            ...res
+            ...res,
+            message: 'Get product successfully'
           }
         }
       } catch (error) {
@@ -67,6 +68,31 @@ export const messageRouter: RouterConfig = {
         return {
           status: 500,
           message: 'add product opportunity error'
+        }
+      }
+    }
+  },
+  '/get_category_list': {
+    handler: async (_, sender) => {
+      if (!sender?.tab?.id) {
+        return {
+          status: 500,
+          message: 'TabId is not exist'
+        }
+      }
+      try {
+        const res = await getCategoryList(sender?.tab?.id)
+        return {
+          status: 200,
+          data: {
+            ...res,
+            message: 'Get category list successfully'
+          }
+        }
+      } catch (error) {
+        return {
+          status: 500,
+          message: 'Get category list error'
         }
       }
     }

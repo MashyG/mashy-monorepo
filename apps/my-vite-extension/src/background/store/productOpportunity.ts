@@ -43,14 +43,3 @@ export const SetProductOpportunity = action((list: any) => {
 export const GetProductOpportunity = action(() => {
   return productOpportunityStore.list
 })
-
-export const SetProductOpportunityParams = action((parmas: ProductOpportunityParams) => {
-  const { tabId, payload } = parmas || {}
-  const { oec_seller_id } = payload || {}
-  SetOecSellerId(oec_seller_id ?? '')
-  productOpportunityStore.paramsMap[tabId] = parmas || {}
-})
-
-export const GetProductOpportunityParams = action(({ tabId }: { tabId: string | number }) => {
-  return productOpportunityStore.paramsMap[tabId] ?? {}
-})

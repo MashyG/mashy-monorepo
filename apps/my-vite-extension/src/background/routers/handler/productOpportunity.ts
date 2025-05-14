@@ -1,31 +1,16 @@
-import {
-  GetOecSellerId,
-  GetProductOpportunityParams,
-  SetProductOpportunity
-} from '@/background/store/productOpportunity'
+import { GetChannelParamsByWebTab } from '@/background/store/channel-params'
+import { GetOecSellerId } from '@/background/store/productOpportunity'
 import { useApi } from '@/share/apis'
-import { type ProductOpportunityParams } from '@/background/store/productOpportunity'
 
-export const fetchProductOpportunityList = async (
-  params: Pick<ProductOpportunityParams, 'apiUrl' | 'payload'>
-) => {
-  const { apiUrl, payload } = params
-  const { data } = await useApi().apiFetch(apiUrl, {
+export const getProductOpportunityList = async ({ data }: { data: any }) => {
+  const { tabId, payload } = data || {}
+  const params = GetChannelParamsByWebTab(tabId, 'popularProducts')
+  const res = await await useApi().apiFetch(params?.apiUrl ?? '', {
     method: 'POST',
     withCredentials: true,
     data: payload
   })
-  return data ?? {}
-}
-export const getProductOpportunityList = async ({ data }: { data: any }) => {
-  const { tabId, payload } = data || {}
-  const { apiUrl } = await GetProductOpportunityParams({ tabId })
-  const res = await fetchProductOpportunityList({
-    apiUrl,
-    payload
-  })
-  await SetProductOpportunity(res?.data ?? [])
-  return res
+  return res?.data ?? {}
 }
 
 export const getTTSPrudocts = async (params: any): Promise<Array<any>> => {
@@ -55,8 +40,7 @@ export const getTTSPrudocts = async (params: any): Promise<Array<any>> => {
 }
 
 export const addProductOpportunity = async (params: Array<any>) => {
-  // TODO 2. 遍历所有产品进行关联
-
+  // 2. 遍历所有产品进行关联
   /**
    * apiUrl： `https://api16-normal-sg.tiktokglobalshop.com/api/v1/product/oc/seller_product_opportunity/relate?oec_seller_id=${oec_seller_id}`
    * POST
@@ -71,7 +55,6 @@ export const addProductOpportunity = async (params: Array<any>) => {
    *  tts_product_id: []
    * }
    * */
-  console.log('addProductOpportunity', params)
   try {
     const oecSellerId = await GetOecSellerId()
     for (let item of params) {
