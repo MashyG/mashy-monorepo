@@ -50,8 +50,10 @@ const handleCurrentChange = (currentPage: number) => {
   handleSearch()
 }
 
-const handleShowDrawer = (lead_id: string, lead_name: string) => {
-  drawerParams.value = { lead_id, lead_name }
+const handleShowDrawer = (product: any) => {
+  const { lead_id, lead_name, level2_cate_name_key } = product
+  const l2_cate_id = level2_cate_name_key.split('_')?.[1] ?? '909064' // 手机配件
+  drawerParams.value = { lead_id, lead_name, l2_cate_id }
   showDrawer.value = true
 }
 const handleClear = () => {
@@ -73,17 +75,26 @@ const handleClear = () => {
       <ElButton type="primary" @click="handleSearch" :loading="isLoading">搜索</ElButton>
       <ElButton @click="handleClear">清空</ElButton>
     </div>
-    <div class="flex flex-wrap p-2" v-if="productOpportunitys.length">
+    <div class="p-2 text-center" v-if="productOpportunitys.length">
       <ElPagination
         layout="prev, pager, next"
+        :current-page="pageNumber"
         :pageSize="100"
         :total="total"
         @change="handleCurrentChange"
       />
-      <div v-for="item of productOpportunitys" :key="item.id" class="p-2 w-1/2 text-center">
-        <PopularProductShow :item="item" @changeDrawer="handleShowDrawer" />
+      <div class="flex flex-wrap">
+        <div v-for="item of productOpportunitys" :key="item.id" class="p-2 w-1/3 text-center">
+          <PopularProductShow :item="item" @changeDrawer="handleShowDrawer" />
+        </div>
       </div>
-      <ElPagination layout="prev, pager, next" :total="total" @change="handleCurrentChange" />
+      <ElPagination
+        layout="prev, pager, next"
+        :current-page="pageNumber"
+        :pageSize="100"
+        :total="total"
+        @change="handleCurrentChange"
+      />
       <ElDrawer append-to-body v-model="showDrawer" title="批量添加产品">
         <BatchAddProductsDrawer :params="drawerParams" />
       </ElDrawer>

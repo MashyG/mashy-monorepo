@@ -21,7 +21,7 @@ const product = computed(() => {
 const isSubmitLoading = ref(false)
 
 const handleAddProduct = () => {
-  emit('changeDrawer', product.value.id, product.value.name)
+  emit('changeDrawer', product.value)
 }
 </script>
 

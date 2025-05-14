@@ -21,7 +21,8 @@ const props = defineProps({
     type: Object,
     default: () => ({
       lead_id: '',
-      lead_name: ''
+      lead_name: '',
+      l2_cate_id: ''
     })
   }
 })
@@ -87,6 +88,9 @@ onBeforeMount(() => {
 watch(
   () => props.params,
   async () => {
+    if (props.params?.l2_cate_id) {
+      category.value = props.params.l2_cate_id
+    }
     keyword.value = props.params.lead_name?.substring(0, 15) ?? ''
     if (keyword.value) {
       fetchProductList()
