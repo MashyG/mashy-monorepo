@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { sendMsg2Bg } from '@/share/messages'
 import { computed, onBeforeMount, ref, watch } from 'vue'
-import { ElButton, ElInput, ElMessage, ElPagination } from 'element-plus'
-import PopularProductShow from './PopularProductShow.vue'
 import { arrayToTree } from '@/share'
+
+import { ElButton, ElInput, ElMessage, ElPagination, ElDivider, ElTreeSelect } from 'element-plus'
+import PopularProductsList from './PopularProductList.vue'
+import PopularKeywordList from './PopularKeywordList.vue'
 
 const keyword = ref('')
 const isSearching = ref(false)
@@ -15,6 +17,14 @@ const popularProductList = ref<Array<any>>([])
 const dataLoading = ref(false)
 const pageNumber = ref(1)
 const total = ref(0)
+const tabToTypeMap = ref<any>({
+  PopularKeyword: 2,
+  PopularProducts: 3
+})
+const userActionMap = ref<any>({
+  PopularKeyword: 'popular_keyword_search_tab',
+  PopularProducts: 'popular_product_tab'
+})
 
 const props = defineProps({
   params: {
@@ -22,7 +32,8 @@ const props = defineProps({
     default: () => ({
       lead_id: '',
       lead_name: '',
-      l2_cate_id: ''
+      l2_cate_id: '909064',
+      active: 'PopularKeyword'
     })
   }
 })
@@ -30,7 +41,29 @@ const props = defineProps({
 const categoryIds = computed(() => {
   return ['601739', category.value] // 手机与数码 + ...
 })
+const opportunityType = computed(() => {
+  return tabToTypeMap.value?.[props.params.active] ?? '2'
+})
+const userAction = computed(() => {
+  return userActionMap.value?.[props.params.active] ?? 'popular_product_tab'
+})
+const showPopularProducts = computed(() => {
+  return props.params.active === 'PopularProducts'
+})
+const showPopularKeyword = computed(() => {
+  return props.params.active === 'PopularKeyword'
+})
 
+const formatList = (list: Array<any>) => {
+  return (list || [])
+    .filter(i => !i.seller_linked)
+    .map((item: any) => {
+      return {
+        ...item,
+        imgUrl: item.images?.[0]?.url_list?.[0] ?? ''
+      }
+    })
+}
 const fetchProductList = async () => {
   if (!props.params.lead_id) {
     ElMessage({
@@ -43,7 +76,7 @@ const fetchProductList = async () => {
     lead_id: props.params.lead_id,
     search_text: keyword.value,
     cate_ids: categoryIds.value,
-    opportunity_type: 3,
+    opportunity_type: opportunityType.value,
     page_number: pageNumber.value,
     page_size: 20
   }
@@ -52,15 +85,6 @@ const fetchProductList = async () => {
   popularProductList.value = formatList(data?.spo_tts_product_details_list ?? [])
   total.value = data?.total_count ?? 0
   dataLoading.value = false
-}
-
-const formatList = (list: Array<any>) => {
-  return list.map((item: any) => {
-    return {
-      ...item,
-      imgUrl: item.images?.[0]?.url_list?.[0] ?? ''
-    }
-  })
 }
 
 const formatCategoryList = (list: Array<any>) => {
@@ -109,27 +133,41 @@ const handleSearchProduct = async () => {
   isSearching.value = false
 }
 
-const handleBatchAddProduct = async () => {
-  isBatchAdd.value = true
-  dataLoading.value = true
+const getOtherParams = (item: any) => {
+  const { id, name, update_title } = item || {}
+  switch (props.params.active) {
+    case 'PopularKeyword':
+      return {
+        tts_product_id: id,
+        title: name,
+        update_title: update_title
+      }
+    case 'PopularProduct':
+      return {
+        tts_product_id: id
+      }
+    default:
+      return {}
+  }
+}
+const formatParams = () => {
   const defaultParams = {
     lead_id: props.params.lead_id,
-    opportunity_type: 3,
-    user_action: 'popular_product_tab',
+    opportunity_type: opportunityType.value,
+    user_action: userAction.value,
     source: 1,
     traffic_source: 'seller_organic',
     tour_id: '7398097458277680901'
   }
   // popularProductList.value 将这个数组分为5各一组，组成新数组
-  const params = popularProductList.value
+  return popularProductList.value
     .slice(0, size.value)
     .reduce((acc, cur, index) => {
       if (index % 5 === 0) {
         acc.push([])
       }
-      acc[acc.length - 1].push({
-        tts_product_id: cur.id
-      })
+      const newParams = getOtherParams(cur)
+      acc[acc.length - 1].push(newParams)
       return acc
     }, [])
     .map((item: Array<any>) => {
@@ -138,17 +176,27 @@ const handleBatchAddProduct = async () => {
         relate_product_items: item
       }
     })
+}
+const handleBatchAddProduct = async () => {
+  isBatchAdd.value = true
+  dataLoading.value = true
+  const params = formatParams()
   await sendMsg2Bg('/add_product_opportunity', params)
   ElMessage({
     message: '批量添加成功',
     type: 'success'
   })
+  await fetchProductList()
   dataLoading.value = false
   isBatchAdd.value = false
 }
 
 const handleDel = (index: number) => {
   popularProductList.value.splice(index, 1)
+}
+
+const handleUpdateList = (list: Array<any>) => {
+  popularProductList.value = list
 }
 
 const handleCurrentChange = (currentPage: number) => {
@@ -159,15 +207,23 @@ const handleCurrentChange = (currentPage: number) => {
 
 <template>
   <div>
+    <div class="w-full"><span class="text-gray-600">名称：</span>{{ props.params.lead_name }}</div>
+    <ElDivider />
     <div class="flex items-center">
       <div class="flex-1">
         <div class="flex items-center">
           <label for="keyword">商品名称：</label
-          ><ElInput id="keyword" class="flex-1" v-model="keyword" placeholder="请输入商品名称" />
+          ><ElInput
+            id="keyword"
+            class="flex-1"
+            v-model="keyword"
+            clearable
+            placeholder="请输入商品名称"
+          />
         </div>
         <div class="flex items-center">
           <label for="keyword">商品分类：</label
-          ><el-tree-select
+          ><ElTreeSelect
             id="category"
             class="flex-1"
             v-model="category"
@@ -196,18 +252,25 @@ const handleCurrentChange = (currentPage: number) => {
             @change="handleCurrentChange"
           />
         </div>
-        <div
-          v-for="(item, index) in popularProductList"
-          :key="item.id"
-          class="p-2 w-1/2 text-center relative"
-          @click="() => handleDel(index)"
-        >
-          <div
-            class="absolute top-0 right-0 text-black bg-white rounded-full px-4 text-lg cursor-pointer"
-          >
-            X
-          </div>
-          <PopularProductShow :item="item" isHideBtn />
+        <PopularProductsList
+          v-if="showPopularProducts"
+          :list="popularProductList"
+          @del="handleDel"
+        />
+        <PopularKeywordList
+          v-else-if="showPopularKeyword"
+          :list="popularProductList"
+          @del="handleDel"
+          @update="handleUpdateList"
+        />
+
+        <div class="w-full text-center">
+          <ElPagination
+            layout="prev, pager, next"
+            :pageSize="20"
+            :total="total"
+            @change="handleCurrentChange"
+          />
         </div>
       </template>
     </div>

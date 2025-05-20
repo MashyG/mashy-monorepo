@@ -1,14 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import DragBox from './components/DragBox.vue'
-import PopularProducts from './components/PopularProducts.vue'
+import ProductOpportunities from './components/ProductOpportunities.vue'
 </script>
 
 <template>
   <DragBox>
     <div
-      class="w-[600px] max-h-[500px] overflow-auto bg-white shadow-md rounded-md p-4 border border-solid border-blue-400"
+      class="w-[600px] max-h-[550px] overflow-hidden bg-white shadow-md rounded-md p-12 border border-solid border-green-600"
     >
-      <PopularProducts /></div
+      <ProductOpportunities /></div
   ></DragBox>
 </template>
 
