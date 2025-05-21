@@ -1,5 +1,5 @@
 import { GetChannelParamsByWebTab } from '@/background/store/channel-params'
-import { GetOecSellerId } from '@/background/store/productOpportunity'
+import { GetQueryParams } from '@/background/store/productOpportunity'
 import { useApi } from '@/share/apis'
 
 export const getProductOpportunityList = async ({ data }: { data: any }) => {
@@ -27,9 +27,9 @@ export const getTTSPrudocts = async (params: any): Promise<Array<any>> => {
    *  page_size: 20
    * }
    * */
-  const oecSellerId = await GetOecSellerId()
+  const queryParams = await GetQueryParams()
   const { data } = await useApi().apiFetch(
-    `https://api16-normal-sg.tiktokglobalshop.com/api/v1/product/oc/seller_product_opportunity/tts_product/trending/search?oec_seller_id=${oecSellerId}`,
+    `https://api16-normal-sg.tiktokglobalshop.com/api/v1/product/oc/seller_product_opportunity/tts_product/trending/search?${queryParams}`,
     {
       method: 'POST',
       withCredentials: true,
@@ -56,10 +56,10 @@ export const addProductOpportunity = async (params: Array<any>) => {
    * }
    * */
   try {
-    const oecSellerId = await GetOecSellerId()
+    const queryParams = await GetQueryParams()
     for (let item of params) {
       await useApi().apiFetch(
-        `https://api16-normal-sg.tiktokglobalshop.com/api/v1/product/oc/seller_product_opportunity/relate?oec_seller_id=${oecSellerId}`,
+        `https://api16-normal-sg.tiktokglobalshop.com/api/v1/product/oc/seller_product_opportunity/relate?${queryParams}`,
         {
           method: 'POST',
           withCredentials: true,

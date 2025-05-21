@@ -21,6 +21,7 @@ export const SetChannelParamsByWebTab = action(
   (params: { tabId: number; channel: string; apiUrl: string; data: any }) => {
     const { channel, tabId, apiUrl, data } = params
     const { oec_seller_id } = data || {}
+
     if (oec_seller_id) {
       SetOecSellerId(oec_seller_id)
     }

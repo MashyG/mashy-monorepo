@@ -20,12 +20,22 @@ interface ProductOpportunityStore {
   oecSellerId: string
   list: Array<any>
   paramsMap: Record<string, ProductOpportunityParams>
+  queryParams: string
 }
 
 export const productOpportunityStore = observable<ProductOpportunityStore>({
   oecSellerId: '',
   list: [],
-  paramsMap: {}
+  paramsMap: {},
+  queryParams: ''
+})
+
+export const SetQueryParams = action((str: string) => {
+  productOpportunityStore.queryParams = str ?? ''
+})
+
+export const GetQueryParams = action(() => {
+  return productOpportunityStore.queryParams
 })
 
 export const SetOecSellerId = action((id: string) => {

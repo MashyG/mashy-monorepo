@@ -1,5 +1,5 @@
 {
-  "name": "my-vite-extension",
+  "name": "@mashy-monorepo/my-vite-extension",
   "private": true,
   "version": "0.0.0",
   "type": "module",

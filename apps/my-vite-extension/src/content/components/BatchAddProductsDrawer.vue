@@ -55,9 +55,7 @@ const showPopularKeyword = computed(() => {
 })
 
 const formatList = (list: Array<any>) => {
-  return (list || [])
-    .filter(i => !i.seller_linked)
-    .map((item: any) => {
+  return (list || []).map((item: any) => {
       return {
         ...item,
         imgUrl: item.images?.[0]?.url_list?.[0] ?? ''
@@ -142,7 +140,7 @@ const getOtherParams = (item: any) => {
         title: name,
         update_title: update_title
       }
-    case 'PopularProduct':
+    case 'PopularProducts':
       return {
         tts_product_id: id
       }
@@ -160,7 +158,15 @@ const formatParams = () => {
     tour_id: '7398097458277680901'
   }
   // popularProductList.value 将这个数组分为5各一组，组成新数组
-  return popularProductList.value
+  const list = popularProductList.value.filter(item => !item.seller_linked)
+  if (list.length === 0) {
+    ElMessage({
+      message: '没有可提报的商品',
+      type: 'warning'
+    })
+    return null
+  }
+  return list
     .slice(0, size.value)
     .reduce((acc, cur, index) => {
       if (index % 5 === 0) {
@@ -181,12 +187,15 @@ const handleBatchAddProduct = async () => {
   isBatchAdd.value = true
   dataLoading.value = true
   const params = formatParams()
-  await sendMsg2Bg('/add_product_opportunity', params)
-  ElMessage({
-    message: '批量添加成功',
-    type: 'success'
-  })
-  await fetchProductList()
+  if (params) {
+    await sendMsg2Bg('/add_product_opportunity', params)
+    ElMessage({
+      message: '批量添加成功',
+      type: 'success'
+    })
+    await fetchProductList()
+
+  }
   dataLoading.value = false
   isBatchAdd.value = false
 }

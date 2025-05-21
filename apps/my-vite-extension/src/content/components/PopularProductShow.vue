@@ -31,6 +31,7 @@ const handleAddProduct = () => {
   <div class="text-blue-600 overflow-hidden text-nowrap text-ellipsis">
     {{ product.name }}
   </div>
+  <div v-if="product.seller_linked" class="text-xs text-blue-400 py-1">已提报</div>
   <ElButton v-if="!isHideBtn" type="primary" @click="handleAddProduct" :loading="isSubmitLoading"
     >Select Product</ElButton
   >
