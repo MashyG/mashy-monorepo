@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { ElInput, ElButton, ElSwitch, ElDivider } from 'element-plus'
+import { ElInput, ElButton, ElSwitch, ElDivider, ElMessage } from 'element-plus'
 
 const emits = defineEmits(['del', 'update'])
 
@@ -36,13 +36,14 @@ const handleUpdateList = () => {
     }
   })
   emits('update', newList)
+  ElMessage.success('保存成功')
 }
 </script>
 
 <template>
   <div class="w-full">
-    <span class="text-xs text-gray-500">提示：先保存后批量处理~~~</span>
     <ElButton :loading="isUpdateLoading" @click="handleUpdateList">保存</ElButton>
+    <span class="text-xs text-gray-500">提示：先保存后批量处理~~~</span>
     <div v-for="(item, index) in props.list" :key="item.id">
       <div class="flex items-start">
         <img :src="item.imgUrl" class="w-[120px] rounded" />
@@ -52,7 +53,7 @@ const handleUpdateList = () => {
             <ElInput
               v-model="item.name"
               :rows="4"
-              :max="255"
+              max="255"
               type="textarea"
               placeholder="请输入/修改标题"
               class="flex-1"

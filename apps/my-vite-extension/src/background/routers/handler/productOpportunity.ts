@@ -5,7 +5,10 @@ import { useApi } from '@/share/apis'
 export const getProductOpportunityList = async ({ data }: { data: any }) => {
   const { tabId, payload } = data || {}
   const params = GetChannelParamsByWebTab(tabId, 'popularProducts')
-  const res = await await useApi().apiFetch(params?.apiUrl ?? '', {
+  const queryParams = await GetQueryParams()
+  if (!params?.apiUrl || !queryParams) return {}
+  const url = params?.apiUrl + `?${queryParams}`
+  const res = await await useApi().apiFetch(url, {
     method: 'POST',
     withCredentials: true,
     data: payload

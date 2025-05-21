@@ -116,7 +116,7 @@ const handleClear = () => {
       <div class="w-full flex items-center justify-center">
         <div class="flex items-center mr-6 flex-1">
           <label>排序：</label>
-          <ElSelect v-model="sortBy" placeholder="Select" class="flex-1">
+          <ElSelect v-model="sortBy" placeholder="Select" class="flex-1 min-w-[200px]">
             <ElOption v-for="item in SORT_BY" :key="item.id" :label="item.name" :value="item.id" />
           </ElSelect>
         </div>
@@ -133,7 +133,7 @@ const handleClear = () => {
           />
         </div>
         <div class="flex flex-wrap">
-          <div v-for="item of productOpportunitys" :key="item.id" class="p-2 w-1/3 text-center">
+          <div v-for="item of productOpportunitys" :key="item.id" class="p-2 w-1/4 text-center">
             <PopularProductShow :item="item" @changeDrawer="handleShowDrawer" />
           </div>
         </div>
