@@ -10,7 +10,7 @@ import {
   ElTabPane
 } from 'element-plus'
 import { sendMsg2Bg } from '@/share/messages'
-import { SORT_BY } from '@/share/constant'
+import { SORT_BY_FOR_PRODUCT, SORT_BY_FOR_KEYWORD } from '@/share/constant'
 
 import PopularProductShow from './PopularProductShow.vue'
 import BatchAddProductsDrawer from './BatchAddProductsDrawer.vue'
@@ -37,6 +37,9 @@ const drawerParams = ref({})
 const pageNumber = ref(1)
 const total = ref(0)
 
+const SORT_BY = computed(() => {
+  return activeName.value === 'PopularKeyword' ? SORT_BY_FOR_KEYWORD : SORT_BY_FOR_PRODUCT
+})
 const params = computed(() => {
   return {
     incentiveTaskId: null,

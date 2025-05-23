@@ -235,6 +235,7 @@ const handleCurrentChange = (currentPage: number) => {
           ><ElTreeSelect
             id="category"
             class="flex-1"
+            clearable
             v-model="category"
             :data="categoryList"
             :render-after-expand="false"

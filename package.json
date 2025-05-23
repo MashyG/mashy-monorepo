@@ -10,7 +10,7 @@
     "dev:electron": "pnpm -F @mashy-monorepo/electron-vite-vue3 dev",
     "dev:next": "pnpm -F @mashy-monorepo/next-project dev",
     "dev:extension": "pnpm -F @mashy-monorepo/chrome-extension dev",
-    "dev:myExtension": "pnpm -F @mashy-monorepo/my-vite-extension build",
+    "dev:tk": "pnpm -F @mashy-monorepo/my-vite-extension build",
 
     "build:notes": "pnpm -F @mashy-monorepo/next-react-notes build"
   },

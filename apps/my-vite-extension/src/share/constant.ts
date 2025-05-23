@@ -1,23 +1,45 @@
-export const SORT_BY = [
+export const SORT_BY_FOR_PRODUCT = [
   {
     id: 1,
-    name: 'Relevance (descending)'
+    name: '相关性（降序）'
   },
   {
     id: 2,
-    name: 'Items sold (descending)'
+    name: '成交件数（降序）'
   },
   {
     id: 3,
-    name: 'Items sold (ascending)'
+    name: '成交件数（升序）'
   },
   {
     id: 4,
-    name: 'Related products (ascending)'
+    name: '相关产品（降序）'
   },
   {
     id: 5,
-    name: 'Related products (descending)'
+    name: '相关产品（升序）'
+  }
+]
+export const SORT_BY_FOR_KEYWORD = [
+  {
+    id: 1,
+    name: '相关性（降序）'
+  },
+  {
+    id: 12,
+    name: '搜索量（降序）'
+  },
+  {
+    id: 13,
+    name: '搜索量（升序）'
+  },
+  {
+    id: 10,
+    name: '相关产品（降序）'
+  },
+  {
+    id: 11,
+    name: '相关产品（升序）'
   }
 ]
 
