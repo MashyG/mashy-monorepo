@@ -35,7 +35,7 @@ export default function makeManifest(): PluginOption {
   }
 }
 export const getManifestConfig = () => {
-  const matches: Array<string> = ['*://*.tiktokglobalshop.com/product/*', '*://*.baidu.com/*']
+  const matches: Array<string> = ['*://*.tiktokglobalshop.com/product/*']
   return {
     manifest_version: 3,
     name: 'My Vite Extension',
@@ -61,7 +61,7 @@ export const getManifestConfig = () => {
       }
     ],
     externally_connectable: {
-      matches
+      matches: [...matches, '*://erp.91miaoshou.com/*']
     },
     web_accessible_resources: [
       {
@@ -69,7 +69,7 @@ export const getManifestConfig = () => {
         matches: ['<all_urls>']
       }
     ],
-    host_permissions: matches,
+    host_permissions: [...matches, '*://erp.91miaoshou.com/*'],
     permissions: [
       'webRequest',
       'declarativeNetRequest',

@@ -6,6 +6,11 @@
 export {}
 
 declare module 'vue' {
+  export interface GlobalComponents {
+    ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
+    ElInput: typeof import('element-plus/es')['ElInput']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
+  }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }

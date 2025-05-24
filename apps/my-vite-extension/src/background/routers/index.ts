@@ -5,6 +5,7 @@ import {
   getTTSPrudocts
 } from './handler/productOpportunity'
 import { getCategoryList } from './handler/categoryList'
+import { collectProducts } from './handler/collectProducts'
 
 export const messageRouter: RouterConfig = {
   '/get_product_opportunity': {
@@ -93,6 +94,18 @@ export const messageRouter: RouterConfig = {
         return {
           status: 500,
           message: 'Get category list error'
+        }
+      }
+    }
+  },
+  '/collect_products': {
+    handler: async (message, sender) => {
+      try {
+        return await collectProducts(message.params, sender)
+      } catch (error) {
+        return {
+          status: 500,
+          message: 'Collect products error'
         }
       }
     }
