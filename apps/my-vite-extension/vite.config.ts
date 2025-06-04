@@ -27,7 +27,12 @@ export default defineConfig({
     })
   ],
   css: {
-    devSourcemap: true
+    devSourcemap: true,
+    // 配置 CSS 模块化
+    modules: {
+      scopeBehaviour: 'local',
+      generateScopedName: 'mashy-[local]-[hash:base64:5]'
+    }
   },
   resolve: {
     alias: {

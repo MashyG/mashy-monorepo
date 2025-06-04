@@ -1,31 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
-import {
-  ElButton,
-  ElSelect,
-  ElOption,
-  ElDrawer,
-  ElPagination,
-  ElTabs,
-  ElTabPane,
-  ElCheckbox
-} from 'element-plus'
+import { ref, computed, nextTick, type PropType } from 'vue'
+import { ElButton, ElSelect, ElOption, ElDrawer, ElPagination, ElCheckbox } from 'element-plus'
 import { sendMsg2Bg } from '@/share/messages'
 import { SORT_BY_FOR_PRODUCT, SORT_BY_FOR_KEYWORD } from '@/share/constant'
-
 import PopularProductShow from './PopularProductShow.vue'
 import BatchAddProductsDrawer from './BatchAddProductsDrawer.vue'
 import CollectProductsDrawer from './CollectProductsDrawer.vue'
-type TabName = 'PopularKeyword' | 'PopularProducts'
-const activeName = ref<TabName>('PopularKeyword')
-interface TabItem {
-  name: TabName
-  label: string
-}
-const elTabPanes = ref<Array<TabItem>>([
-  { name: 'PopularKeyword', label: '批量添加热门关键词' },
-  { name: 'PopularProducts', label: '批量添加热门产品' }
-])
+import { type TabName } from '../utils/types'
+
+const props = defineProps({
+  activeTab: {
+    type: String as PropType<TabName>,
+    default: 'PopularKeyword'
+  }
+})
+
 const tabToTypeMap = ref({
   PopularKeyword: 201,
   PopularProducts: 3
@@ -41,15 +30,14 @@ const showSelected = ref(false)
 const showCollectDrawer = ref(false)
 const selectedProductsDrawerParams = ref({})
 
-
 const SORT_BY = computed(() => {
-  return activeName.value === 'PopularKeyword' ? SORT_BY_FOR_KEYWORD : SORT_BY_FOR_PRODUCT
+  return props.activeTab === 'PopularKeyword' ? SORT_BY_FOR_KEYWORD : SORT_BY_FOR_PRODUCT
 })
 const params = computed(() => {
   return {
     incentiveTaskId: null,
     incentive_tag_query: {},
-    opportunity_type: tabToTypeMap.value[activeName.value],
+    opportunity_type: tabToTypeMap.value[props.activeTab],
     page_number: pageNumber.value,
     page_size: 100,
     sort_field: sortBy.value, // 排序
@@ -57,17 +45,6 @@ const params = computed(() => {
     use_like: false
   }
 })
-const drawerTitle = computed(() => {
-  const elTabItem = elTabPanes.value.find((item: any) => item.name === activeName.value)
-  return elTabItem?.label ?? ''
-})
-
-const handleChangeTab = () => {
-  nextTick(() => {
-    handleClear()
-    handleSearch()
-  })
-}
 
 const handleSearch = async () => {
   isLoading.value = true
@@ -100,7 +77,7 @@ const handleShowDrawer = (product: any) => {
     lead_id,
     lead_name,
     l2_cate_id,
-    active: activeName.value
+    active: props.activeTab
   }
   showDrawer.value = true
 }
@@ -136,14 +113,6 @@ const handleChangeCollectDrawer = () => {
 
 <template>
   <div class="w-ful">
-    <ElTabs v-model="activeName" class="w-full" @tab-change="handleChangeTab">
-      <ElTabPane
-        v-for="item of elTabPanes"
-        :key="item.name"
-        :label="item.label"
-        :name="item.name"
-      ></ElTabPane>
-    </ElTabs>
     <div class="w-full">
       <div class="w-full flex items-center justify-center">
         <div class="flex items-center mr-6 flex-1">
@@ -167,11 +136,19 @@ const handleChangeCollectDrawer = () => {
           />
         </div>
         <div class="flex flex-wrap">
-          <div v-for="(item, index) of productOpportunitys" :key="item.id" class="p-2 w-1/4 text-center">
+          <div
+            v-for="(item, index) of productOpportunitys"
+            :key="item.id"
+            class="p-2 w-1/4 text-center border border-solid border-gray-300 rounded-md"
+          >
             <template v-if="showSelected">
               <ElCheckbox v-model="item.selected" :label="`序号 ${index + 1}`" />
             </template>
-            <PopularProductShow :item="item" :isHideBtn="showSelected" @changeDrawer="handleShowDrawer" />
+            <PopularProductShow
+              :item="item"
+              :isHideBtn="showSelected"
+              @changeDrawer="handleShowDrawer"
+            />
           </div>
         </div>
         <div class="w-full text-center">
@@ -184,11 +161,14 @@ const handleChangeCollectDrawer = () => {
         </div>
       </div>
     </div>
-    <ElDrawer append-to-body v-model="showDrawer" :title="drawerTitle" size="50%">
+    <ElDrawer append-to-body v-model="showDrawer" title="批量添加产品" size="50%">
       <BatchAddProductsDrawer :params="drawerParams" />
     </ElDrawer>
     <ElDrawer append-to-body v-model="showCollectDrawer" title="采集产品" size="50%">
-      <CollectProductsDrawer :params="selectedProductsDrawerParams" @changeDrawer="handleChangeCollectDrawer" />
+      <CollectProductsDrawer
+        :params="selectedProductsDrawerParams"
+        @changeDrawer="handleChangeCollectDrawer"
+      />
     </ElDrawer>
   </div>
 </template>

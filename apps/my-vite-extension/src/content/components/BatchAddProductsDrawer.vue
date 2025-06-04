@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { sendMsg2Bg } from '@/share/messages'
 import { computed, onBeforeMount, ref, watch } from 'vue'
-import { arrayToTree } from '@/share'
+import { arrayToTree, sleep } from '@/share'
 
 import { ElButton, ElInput, ElMessage, ElPagination, ElDivider, ElTreeSelect } from 'element-plus'
 import PopularProductsList from './PopularProductList.vue'
@@ -25,6 +25,7 @@ const userActionMap = ref<any>({
   PopularKeyword: 'popular_keyword_search_tab',
   PopularProducts: 'popular_product_tab'
 })
+const showCustomSelect = ref(false)
 
 const props = defineProps({
   params: {
@@ -53,14 +54,31 @@ const showPopularProducts = computed(() => {
 const showPopularKeyword = computed(() => {
   return props.params.active === 'PopularKeyword'
 })
-
+const fetchProductsParams = computed(() => {
+  return {
+    lead_id: props.params.lead_id,
+    search_text: keyword.value,
+    cate_ids: categoryIds.value,
+    opportunity_type: opportunityType.value,
+    page_number: pageNumber.value,
+    page_size: 20
+  }
+})
 const formatList = (list: Array<any>) => {
   return (list || []).map((item: any) => {
-      return {
-        ...item,
-        imgUrl: item.images?.[0]?.url_list?.[0] ?? ''
-      }
-    })
+    return {
+      ...item,
+      imgUrl: item.images?.[0]?.url_list?.[0] ?? '',
+      selected: false
+    }
+  })
+}
+const getProducts = async (params: any) => {
+  const { data } = await sendMsg2Bg('/get_tts_product', params)
+  return {
+    list: formatList(data?.spo_tts_product_details_list ?? []),
+    totalCount: data?.total_count ?? 0
+  }
 }
 const fetchProductList = async () => {
   if (!props.params.lead_id) {
@@ -70,18 +88,10 @@ const fetchProductList = async () => {
     })
     return
   }
-  const params = {
-    lead_id: props.params.lead_id,
-    search_text: keyword.value,
-    cate_ids: categoryIds.value,
-    opportunity_type: opportunityType.value,
-    page_number: pageNumber.value,
-    page_size: 20
-  }
   dataLoading.value = true
-  const { data } = await sendMsg2Bg('/get_tts_product', params)
-  popularProductList.value = formatList(data?.spo_tts_product_details_list ?? [])
-  total.value = data?.total_count ?? 0
+  const { list, totalCount } = await getProducts(fetchProductsParams.value)
+  popularProductList.value = list
+  total.value = totalCount
   dataLoading.value = false
 }
 
@@ -115,7 +125,7 @@ watch(
     }
     keyword.value = props.params.lead_name?.substring(0, 15) ?? ''
     if (keyword.value) {
-      fetchProductList()
+      await fetchProductList()
     }
   },
   {
@@ -127,7 +137,12 @@ watch(
 const handleSearchProduct = async () => {
   isSearching.value = true
   pageNumber.value = 1
-  await fetchProductList()
+  if (showCustomSelect.value) {
+    await getProductsByPage(1, 5)
+    pageNumber.value = 6
+  } else {
+    await fetchProductList()
+  }
   isSearching.value = false
 }
 
@@ -157,31 +172,33 @@ const formatParams = () => {
     traffic_source: 'seller_organic',
     tour_id: '7398097458277680901'
   }
-  // popularProductList.value 将这个数组分为5各一组，组成新数组
-  const list = popularProductList.value.filter(item => !item.seller_linked)
-  if (list.length === 0) {
+
+  const filteredList = popularProductList.value
+    .filter(item => !item.seller_linked)
+    .filter(item => !showCustomSelect.value || item.selected)
+    .slice(0, size.value)
+
+  if (filteredList.length === 0) {
     ElMessage({
       message: '没有可提报的商品',
       type: 'warning'
     })
     return null
   }
-  return list
-    .slice(0, size.value)
+
+  return filteredList
     .reduce((acc, cur, index) => {
-      if (index % 5 === 0) {
-        acc.push([])
+      const groupIndex = Math.floor(index / 5)
+      if (!acc[groupIndex]) {
+        acc[groupIndex] = []
       }
-      const newParams = getOtherParams(cur)
-      acc[acc.length - 1].push(newParams)
+      acc[groupIndex].push(getOtherParams(cur))
       return acc
     }, [])
-    .map((item: Array<any>) => {
-      return {
-        ...defaultParams,
-        relate_product_items: item
-      }
-    })
+    .map(group => ({
+      ...defaultParams,
+      relate_product_items: group
+    }))
 }
 const handleBatchAddProduct = async () => {
   isBatchAdd.value = true
@@ -193,8 +210,9 @@ const handleBatchAddProduct = async () => {
       message: '批量添加成功',
       type: 'success'
     })
-    await fetchProductList()
-
+    if (!showCustomSelect.value) {
+      await fetchProductList()
+    }
   }
   dataLoading.value = false
   isBatchAdd.value = false
@@ -208,9 +226,58 @@ const handleUpdateList = (list: Array<any>) => {
   popularProductList.value = list
 }
 
-const handleCurrentChange = (currentPage: number) => {
+const handleCurrentChange = async (currentPage: number) => {
   pageNumber.value = currentPage
-  fetchProductList()
+  await fetchProductList()
+}
+
+const getProductsByPage = async (pageStart: number, pageEnd: number) => {
+  dataLoading.value = true
+  for (let i = pageStart; i <= pageEnd; i++) {
+    const params = {
+      ...fetchProductsParams.value,
+      page_number: i
+    }
+    const { list, totalCount } = await getProducts(params)
+    popularProductList.value.push(...(list ?? []))
+    dataLoading.value = false
+    total.value = totalCount
+    if (totalCount / 20 < 2) {
+      break
+    }
+    await sleep(500)
+  }
+}
+const handleCustomSelect = async () => {
+  showCustomSelect.value = !showCustomSelect.value
+  if (showCustomSelect.value) {
+    await getProductsByPage(pageNumber.value, pageNumber.value + 4)
+    pageNumber.value = pageNumber.value + 4
+  }
+}
+const handleCustomSelectPrev = async () => {
+  if (pageNumber.value - 4 < 1) {
+    ElMessage({
+      message: '已经是第一批了',
+      type: 'warning'
+    })
+    return
+  }
+  popularProductList.value = []
+  await getProductsByPage(pageNumber.value - 4, pageNumber.value)
+  pageNumber.value = pageNumber.value - 4
+}
+const handleCustomSelectNext = async () => {
+  if (pageNumber.value > total.value / 20) {
+    ElMessage({
+      message: '已经是最后一批了',
+      type: 'warning'
+    })
+    return
+  }
+  popularProductList.value = []
+  await getProductsByPage(pageNumber.value, pageNumber.value + 4)
+  pageNumber.value = pageNumber.value + 4
 }
 </script>
 
@@ -249,40 +316,53 @@ const handleCurrentChange = (currentPage: number) => {
       ><ElInput id="size" class="flex-1" v-model="size" placeholder="请输入数量" />
       <ElButton :loading="isBatchAdd" @click="handleBatchAddProduct">批量处理</ElButton>
     </div>
-    <div class="flex flex-wrap p-2" v-loading="dataLoading">
-      <div v-if="!popularProductList.length" class="text-center text-gray-600 w-full pt-3">
-        暂无数据~
+    <div class="flex items-center justify-end my-4">
+      <div v-if="showCustomSelect">
+        <span class="text-sm text-red-500">自定义选择情况下，必须选择下列产品才可批量处理！！</span>
+        <ElButton @click="handleCustomSelectPrev">上一批</ElButton>
+        <ElButton @click="handleCustomSelectNext">下一批</ElButton>
       </div>
-      <template v-else>
-        <div class="w-full text-center">
-          <ElPagination
-            layout="prev, pager, next"
-            :pageSize="20"
-            :total="total"
-            @change="handleCurrentChange"
-          />
-        </div>
-        <PopularProductsList
-          v-if="showPopularProducts"
-          :list="popularProductList"
-          @del="handleDel"
+      <ElButton type="primary" @click="handleCustomSelect">自定义选择</ElButton>
+    </div>
+    <div v-if="!popularProductList.length" class="text-center text-gray-600 w-full pt-3">
+      暂无数据~
+    </div>
+    <div v-if="showCustomSelect" class="flex flex-wrap p-2 justify-between" v-loading="dataLoading">
+      <div
+        v-for="item in popularProductList"
+        :key="item.id"
+        class="flex flex-col items-center border rounded p-1"
+      >
+        <ElCheckbox v-model="item.selected" size="large" class="!h-full">
+          <img :src="item.imgUrl" alt="" class="w-[120px] h-[120px]" />
+        </ElCheckbox>
+      </div>
+    </div>
+    <div v-else class="flex flex-wrap p-2" v-loading="dataLoading">
+      <div class="w-full text-center">
+        <ElPagination
+          layout="prev, pager, next"
+          :pageSize="20"
+          :total="total"
+          @change="handleCurrentChange"
         />
-        <PopularKeywordList
-          v-else-if="showPopularKeyword"
-          :list="popularProductList"
-          @del="handleDel"
-          @update="handleUpdateList"
-        />
+      </div>
+      <PopularProductsList v-if="showPopularProducts" :list="popularProductList" @del="handleDel" />
+      <PopularKeywordList
+        v-else-if="showPopularKeyword"
+        :list="popularProductList"
+        @del="handleDel"
+        @update="handleUpdateList"
+      />
 
-        <div class="w-full text-center">
-          <ElPagination
-            layout="prev, pager, next"
-            :pageSize="20"
-            :total="total"
-            @change="handleCurrentChange"
-          />
-        </div>
-      </template>
+      <div class="w-full text-center">
+        <ElPagination
+          layout="prev, pager, next"
+          :pageSize="20"
+          :total="total"
+          @change="handleCurrentChange"
+        />
+      </div>
     </div>
   </div>
 </template>

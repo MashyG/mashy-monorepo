@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { sleep } from '@/share'
-import { onMounted, onUnmounted, ref, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, nextTick, type PropType } from 'vue'
+import { type TabName } from '../utils/types'
+
+const props = defineProps({
+  activeTab: {
+    type: String as PropType<TabName>,
+    default: 'PopularKeyword'
+  }
+})
 
 const rootEl = ref<any>(null)
 const defaultOffset = 16
@@ -91,7 +99,7 @@ const handleDragEnd = async (event: MouseEvent) => {
 <template>
   <div
     ref="rootEl"
-    class="fixed z-[999] select-none"
+    :class="`fixed select-none ${props.activeTab === 'DownLoadImgs' ? 'z-[99999]' : 'z-[999]'}`"
     :style="position"
     @mousedown="handleDragStart"
   >
