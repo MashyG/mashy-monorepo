@@ -29,12 +29,13 @@ const total = ref(0)
 const showSelected = ref(false)
 const showCollectDrawer = ref(false)
 const selectedProductsDrawerParams = ref({})
+const selectedBestSellingOnline = ref('')
 
 const SORT_BY = computed(() => {
   return props.activeTab === 'PopularKeyword' ? SORT_BY_FOR_KEYWORD : SORT_BY_FOR_PRODUCT
 })
 const params = computed(() => {
-  return {
+  let p = {
     incentiveTaskId: null,
     incentive_tag_query: {},
     opportunity_type: tabToTypeMap.value[props.activeTab],
@@ -44,6 +45,13 @@ const params = computed(() => {
     traffic_source: 'seller_organic',
     use_like: false
   }
+  if (selectedBestSellingOnline.value) {
+    p = {
+      ...p,      
+      theme_code: ["best_selling_online"]
+    }
+  }
+  return p
 })
 
 const handleSearch = async () => {
@@ -123,6 +131,9 @@ const handleChangeCollectDrawer = () => {
         </div>
         <ElButton type="primary" @click="handleSearch" :loading="isLoading">搜索</ElButton>
         <ElButton type="danger" @click="handleClear">清空列表</ElButton>
+      </div>
+      <div class="flex item-center my-2">
+        <ElCheckbox v-model="selectedBestSellingOnline" label="best_selling_online" >基于市场趋势的热门商品</ElCheckbox>
       </div>
       <div class="p-2 overflow-auto max-h-[420px]" v-if="productOpportunitys.length">
         <ElButton @click="showSelected = !showSelected">采集产品</ElButton>

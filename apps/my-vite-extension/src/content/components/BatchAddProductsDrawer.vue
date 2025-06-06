@@ -123,10 +123,7 @@ watch(
     if (props.params?.l2_cate_id) {
       category.value = props.params.l2_cate_id
     }
-    keyword.value = props.params.lead_name?.substring(0, 15) ?? ''
-    if (keyword.value) {
-      await fetchProductList()
-    }
+    await fetchProductList()
   },
   {
     immediate: true,
