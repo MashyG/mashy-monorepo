@@ -21,7 +21,7 @@ const elTabPanes = ref<Array<TabItem>>([
 <template>
   <DragBox :activeTab="activeTab">
     <div
-      class="max-w-[800px] max-h-[550px] overflow-hidden bg-white shadow-md rounded-md p-12 border border-solid border-green-600"
+      class="max-w-[800px] max-h-[680px] overflow-hidden bg-white shadow-md rounded-md p-12 border border-solid border-green-600"
     >
       <ElTabs v-model="activeTab" class="w-full">
         <ElTabPane

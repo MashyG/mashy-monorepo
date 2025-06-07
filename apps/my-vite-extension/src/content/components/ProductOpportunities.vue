@@ -31,6 +31,9 @@ const showCollectDrawer = ref(false)
 const selectedProductsDrawerParams = ref({})
 const selectedBestSellingOnline = ref('')
 
+const hasList = computed(() => {
+  return productOpportunitys.value.length
+})
 const SORT_BY = computed(() => {
   return props.activeTab === 'PopularKeyword' ? SORT_BY_FOR_KEYWORD : SORT_BY_FOR_PRODUCT
 })
@@ -132,12 +135,14 @@ const handleChangeCollectDrawer = () => {
         <ElButton type="primary" @click="handleSearch" :loading="isLoading">搜索</ElButton>
         <ElButton type="danger" @click="handleClear">清空列表</ElButton>
       </div>
-      <div class="flex item-center my-2">
+      <div class="flex item-center justify-between py-2">
         <ElCheckbox v-model="selectedBestSellingOnline" label="best_selling_online" >基于市场趋势的热门商品</ElCheckbox>
+        <div v-if="hasList">
+          <ElButton @click="showSelected = !showSelected">采集产品</ElButton>
+          <ElButton v-if="showSelected" type="primary" @click="handleCollect">开始采集</ElButton>
+        </div>
       </div>
-      <div class="p-2 overflow-auto max-h-[420px]" v-if="productOpportunitys.length">
-        <ElButton @click="showSelected = !showSelected">采集产品</ElButton>
-        <ElButton v-if="showSelected" type="primary" @click="handleCollect">开始采集</ElButton>
+      <div class="p-2 overflow-auto max-h-[520px]" v-if="hasList">
         <div class="w-full text-center">
           <ElPagination
             layout="prev, pager, next"

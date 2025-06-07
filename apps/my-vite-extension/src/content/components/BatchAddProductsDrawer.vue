@@ -26,6 +26,7 @@ const userActionMap = ref<any>({
   PopularProducts: 'popular_product_tab'
 })
 const showCustomSelect = ref(false)
+const selectedAll = ref(false)
 
 const props = defineProps({
   params: {
@@ -64,6 +65,11 @@ const fetchProductsParams = computed(() => {
     page_size: 20
   }
 })
+
+const init = () => {
+  pageNumber.value = 1
+  popularProductList.value = []
+}
 const formatList = (list: Array<any>) => {
   return (list || []).map((item: any) => {
     return {
@@ -123,6 +129,7 @@ watch(
     if (props.params?.l2_cate_id) {
       category.value = props.params.l2_cate_id
     }
+    init()
     await fetchProductList()
   },
   {
@@ -133,7 +140,7 @@ watch(
 
 const handleSearchProduct = async () => {
   isSearching.value = true
-  pageNumber.value = 1
+  init()
   if (showCustomSelect.value) {
     await getProductsByPage(1, 5)
     pageNumber.value = 6
@@ -276,6 +283,14 @@ const handleCustomSelectNext = async () => {
   await getProductsByPage(pageNumber.value, pageNumber.value + 4)
   pageNumber.value = pageNumber.value + 4
 }
+const changeSelectedAll = (isSelected: boolean) => {
+  popularProductList.value = popularProductList.value.map(i => {
+    return {
+      ...i,
+      selected: isSelected
+    }
+  })
+}
 </script>
 
 <template>
@@ -315,6 +330,7 @@ const handleCustomSelectNext = async () => {
     </div>
     <div class="flex items-center justify-end my-4">
       <div v-if="showCustomSelect">
+        <ElCheckbox v-model="selectedAll" @change="changeSelectedAll" label="全选" />
         <span class="text-sm text-red-500">自定义选择情况下，必须选择下列产品才可批量处理！！</span>
         <ElButton @click="handleCustomSelectPrev">上一批</ElButton>
         <ElButton @click="handleCustomSelectNext">下一批</ElButton>
@@ -324,7 +340,7 @@ const handleCustomSelectNext = async () => {
     <div v-if="!popularProductList.length" class="text-center text-gray-600 w-full pt-3">
       暂无数据~
     </div>
-    <div v-if="showCustomSelect" class="flex flex-wrap p-2 justify-between" v-loading="dataLoading">
+    <div v-if="showCustomSelect" class="flex flex-wrap p-2" v-loading="dataLoading">
       <div
         v-for="item in popularProductList"
         :key="item.id"
@@ -332,6 +348,7 @@ const handleCustomSelectNext = async () => {
       >
         <ElCheckbox v-model="item.selected" size="large" class="!h-full">
           <img :src="item.imgUrl" alt="" class="w-[120px] h-[120px]" />
+          <span class="text-xs text-blue-400 py-1" v-if="item.seller_linked">已提报</span>
         </ElCheckbox>
       </div>
     </div>
